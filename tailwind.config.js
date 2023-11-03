@@ -7,12 +7,17 @@ module.exports = {
     "./plugins/**/*.{js,ts}",
     "./nuxt.config.{js,ts}",
     "./app.vue",
-    "./node_modules/flowbite/**/*.js"
+    "./node_modules/flowbite/**/*.js",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        kanit: ['Kanit', 'sans-serif']
+      },
+    },
   },
-  plugins: [require('flowbite/plugin'),
-  require("daisyui"),
+  plugins: [
+    require('flowbite/plugin'),
+    require("daisyui"),
   ],
 }
