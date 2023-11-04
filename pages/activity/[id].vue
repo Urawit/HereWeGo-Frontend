@@ -1,5 +1,5 @@
 <template>
-    <h1>HereWeGo</h1>
+    <h1>activity detail</h1>
 </template>
 
 <script>

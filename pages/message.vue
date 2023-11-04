@@ -1,5 +1,5 @@
 <template>
-    <h1>HereWeGo</h1>
+    <h1>messenger</h1>
 </template>
 
 <script>

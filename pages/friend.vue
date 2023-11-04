@@ -1,5 +1,5 @@
 <template>
-    <h1>HereWeGo</h1>
+    <h1>friend list</h1>
 </template>
 
 <script>

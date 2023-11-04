@@ -1,9 +1,7 @@
 <template>
-    <h1>HereWeGo</h1>
+    <h1>activity list</h1>
 </template>
 
 <script>
 
 </script>
-
-

@@ -1,5 +1,5 @@
 <template>
-    <h1>HereWeGo</h1>
+    <h1>profile edit</h1>
 </template>
 
 <script>

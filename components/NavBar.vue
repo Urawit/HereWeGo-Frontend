@@ -20,48 +20,52 @@
       </div>
 
       <div class="flex items-center space-x-6">
-        <div>
-          <!-- <MenuLink to="#">
+        <div v-if="!isLogin">
+          <MenuLink to="/login">
             <button
-              class="mr-4 inline-flex items-center px-6 py-1.5 text-sm font-medium text-center text-blue-500 bg-white rounded-lg border border-blue-500">
+              class="mr-4 inline-flex items-center px-6 py-1.5 text-sm font-medium text-center text-blue-500 bg-white rounded-lg border border-blue-500 hover:bg-gray-100">
               Log in
             </button>
           </MenuLink>
-          <MenuLink to="#">
+          <MenuLink to="/register">
             <button
-              class="inline-flex items-center px-6 py-1.5 text-sm font-medium text-center text-white bg-blue-500 rounded-lg border border-blue-500">
+              class="inline-flex items-center px-6 py-1.5 text-sm font-medium text-center text-white bg-blue-500 rounded-lg border border-blue-500 hover:bg-blue-700">
               Register
             </button>
           </MenuLink>
-        </div> -->
+        </div>
 
-          <div class="flex space-x-6">
-            <MenuLink to="#">
-              <img src="@/assets/images/icon/create.png" class="w-6 h-6 mt-1.5" />
-            </MenuLink>
-            <MenuLink to="#">
-              <img src="@/assets/images/icon/friend.png" class="w-6 h-6 mt-1.5" />
-            </MenuLink>
-            <MenuLink to="#">
-              <img src="@/assets/images/icon/chat.png" class="w-6 h-6 mt-1.5" />
-            </MenuLink>
-            <MenuLink to="#">
-              <img src="@/assets/images/icon/bell.png" class="w-6 h-6 mt-1.5" />
-            </MenuLink>
+        <div v-else class="flex space-x-6">
+          <MenuLink to="/activity/create">
+            <img src="@/assets/images/icon/create.png" class="w-6 h-6 mt-1.5" />
+          </MenuLink>
+          <MenuLink to="/friend">
+            <img src="@/assets/images/icon/friend.png" class="w-6 h-6 mt-1.5" />
+          </MenuLink>
+          <MenuLink to="/message">
+            <img src="@/assets/images/icon/chat.png" class="w-6 h-6 mt-1.5" />
+          </MenuLink>
+          <button>
+            <img src="@/assets/images/icon/bell.png" class="w-6 h-6 mt-1.5" />
+          </button>
 
-            <div class="profile-dropdown">
-              <!-- Profile Picture -->
-              <div @click="toggleDropdown" class="profile-picture">
-                <img src="@/assets/images/icon/capture.png" alt="Profile Picture" />
-              </div>
+          <div class="profile-dropdown">
+            <!-- Profile Picture -->
+            <div @click="toggleDropdown" class="profile-picture">
+              <img v-if="!image_path" src="@/assets/images/user-default.jpg" />
+              <img v-else :src="`http://localhost/images/user/${image_path}`" />
+            </div>
 
-              <!-- Dropdown Content -->
-              <div class="dropdown-content" :class="{ open: isDropdownOpen }">
-                <ul>
-                  <li @click="profile">Profile</li>
-                  <li @click="logout">Logout</li>
-                </ul>
-              </div>
+            <!-- Dropdown Content -->
+            <div class="dropdown-content" :class="{ open: isDropdownOpen }">
+              <ul>
+                <li>
+                  <MenuLink to="/profile">
+                    Profile
+                  </MenuLink>
+                </li>
+                <li @click="logout">Logout</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -71,6 +75,9 @@
 </template>
 
 <script>
+import { computed } from "vue";
+import { useAuthStore } from "~/stores/useAuthStore";
+
 export default {
   data() {
     return {
@@ -84,9 +91,21 @@ export default {
     profile() {
 
     },
-    logout() {
+  },
+  setup() {
+    const authStore = useAuthStore();
+    const isLogin = computed(() => authStore.isLogin);
+    const image_path = computed(() => authStore.user.image_path);
 
-    },
+    const logout = () => {
+      authStore.clear();
+    };
+
+    return {
+      isLogin,
+      image_path,
+      logout,
+    };
   },
 };
 </script>
