@@ -22,8 +22,8 @@
                                         v-model="activityData.start_date" :min="getCurrentDateTime()"
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required />
                                     <input v-else type="datetime-local" id="start_date" v-model="activityData.start_date"
-                                        :max="activityData.end_date" :min="getCurrentDateTime()" class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80"
-                                        required />
+                                        :max="activityData.end_date" :min="getCurrentDateTime()"
+                                        class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required />
                                     <span class="text-red-500" v-if="errors.start_date">Start Date is required</span>
                                 </div>
 
@@ -100,8 +100,10 @@
                                     <select id="category" v-model="activityData.category"
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required>
                                         <option disabled value="">Select event type</option>
-                                        <option v-for="category in categories" :value="category.id">{{ category.name }}
+                                        <option v-for="(category, index) in categories" :key="index">{{ category.name }}
                                         </option>
+                                        <!-- <option v-for="category in categories" :value="category.id">{{ category.name }}
+                                        </option> -->
                                     </select>
                                     <span class="text-red-500" v-if="errors.category">Category is required</span>
                                 </div>
@@ -141,6 +143,10 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import useMyFetch from '~/composables/useMyFetch';
+
+const { data: response } = await useMyFetch<any>("allActivities", {})
+const categories = response.value;
 
 const previewUrl = ref(null);
 const selectedFile = ref(null);

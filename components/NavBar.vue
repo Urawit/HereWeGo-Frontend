@@ -53,7 +53,7 @@
             <!-- Profile Picture -->
             <div @click="toggleDropdown" class="profile-picture">
               <img v-if="!image_path" src="@/assets/images/user-default.jpg" />
-              <img v-else :src="`http://localhost/images/user/${image_path}`" />
+              <img v-else :src="`http://localhost/${image_path}`" />
             </div>
 
             <!-- Dropdown Content -->
