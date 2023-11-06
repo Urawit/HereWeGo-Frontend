@@ -8,7 +8,7 @@
                     <nuxt-link :to="`/activity/${activity.id}`">
                         <div>
                             <img v-if="activity.post_image_path"
-                                :src="`http://localhost/images/activity/${activity.post_image_path}`" alt="Card Image"
+                                :src="`http://localhost/${activity.post_image_path}`" alt="Card Image"
                                 class="w-full h-60 object-cover">
                             <img v-else src="@/assets/images/default-image.png" alt="Card Image"
                                 class="w-full h-60 object-cover p-12">

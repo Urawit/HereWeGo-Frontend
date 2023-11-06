@@ -57,7 +57,7 @@ async function submit() {
                 method: 'POST'
             })
             if (user.value !== null) {
-                auth.setUser(user.value.email, user.value.username, user.value.firstname, user.value.lastname, user.value.phone, user.value.image_path);
+                auth.setUser(user.value.id, user.value.email, user.value.username, user.value.firstname, user.value.lastname, user.value.phone, user.value.image_path);
                 await navigateTo('/')
             } else {
                 auth.clear()

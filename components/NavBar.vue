@@ -99,6 +99,7 @@ export default {
 
     const logout = () => {
       authStore.clear();
+      window.location.href = '/';
     };
 
     return {
