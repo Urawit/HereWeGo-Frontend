@@ -7,11 +7,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tailwind Blog Template</title>
         <meta name="author" content="David Grzyb">
         <meta name="description" content="">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@5.15.3/css/all.min.css">
+
 
 
     </head>
@@ -44,7 +42,7 @@
                             formatDateTime(activity.activity.start_date) }}</p>
                         <p class="pb-2"> <i class="fa-regular fa-clock"></i> {{ formatTime(activity.activity.start_date) }}
                             - {{ formatTime(activity.activity.end_date) }}</p>
-                        <p class="pb-2"> <i class="fa-solid fa-map-pin"></i> รอ </p>
+                        <p class="pb-2"> <i class="fa-solid fa-map-pin"></i> {{ activity.activity.location }} </p>
 
                     </div>
 
@@ -52,8 +50,8 @@
                         <p class="text-xl font-semibold pb-5"></p>
                         <div class="grid grid-cols-3 gap-3">
                             <img class="hover:opacity-75"
-                                src="https://source.unsplash.com/collection/1346951/150x150?sig=1">
-
+                                :src="`http://localhost/images/${activity.activity.post_image_path}`">
+                            <!-- {{ activity.activity.post_image_path }} -->
                         </div>
 
                     </div>
@@ -66,23 +64,25 @@
                     <article class="flex flex-col shadow my-4">
                         <!-- Activity Image -->
                         <a>
-                            <img src="https://source.unsplash.com/collection/1346951/1000x500?sig=1">
+                            <img :src="`http://localhost/images/${activity.post_image_path}`">
                         </a>
                         <div class="bg-white flex flex-col justify-start p-6">
-                            <a class="text-blue-700 text-sm font-bold uppercase pb-4"> Master Aactivity </a>
+                            <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
+                                activity.activity.master_activity_id }} </a>
                             <a class="text-3xl font-bold  pb-4">{{ activity.activity.detail }}</a>
 
 
                         </div>
                     </article>
 
-                    <form @submit.prevent="onSubmit(activity.activity.id)">
-                            <button type="submit">
-                                Join
-                            </button>
                     
+                    <form @submit.prevent="onSubmit(activity.activity.id)" >
+                        <button type="submit" id="submit">
+                            Join
+                        </button>
+
                     </form>
-                    
+
 
 
 
@@ -101,8 +101,10 @@
   
 
 <script setup lang="ts" >
+
 import { useAuthStore } from '~/stores/useAuthStore'
 const auth = useAuthStore()
+
 
 const route = useRoute()
 const { data: activity, pending } = await useMyFetch<any>(
@@ -110,10 +112,31 @@ const { data: activity, pending } = await useMyFetch<any>(
     {}
 )
 
-const { data: activityMember } = await useMyFetch<any>(
-    `getActivity/${route.params.id}`,
+
+
+const { data: response } = await useMyFetch<any>(
+    `isMember/${route.params.id}`,
     {}
 )
+const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
+
+if(isMember.value.success){
+    console.log("member");
+
+}else{
+    console.log("not-member");
+   // const submitButton = document.getElementById('submit');
+        // if (submitButton) {
+        //     submitButton.style.display = 'block';
+        // }
+}
+
+
+
+
+
+
+
 
 
 
@@ -130,16 +153,19 @@ const formatTime = (dateTime: string | number | Date) => {
 
 
 async function onSubmit(activityId: any) {
-  const { data: response, error } = await useMyFetch<any>(`joinActivity/${activityId}`, {
-    method: "POST",
-  });
-  
-  if (response.value !== null) {
-    console.log("success");
-  } else {
-    console.log(error.value);
-    const { statusMessage, data } = error.value!;
-  }
+
+
+    const { data: response, error } = await useMyFetch<any>(`joinActivity/${activityId}`, {
+        method: "POST",
+    });
+
+    if (response.value.success) {
+        alert("success joined")
+        //hide button
+    } else {
+
+        alert("you alredy joined");
+    }
 }
 
 </script>
