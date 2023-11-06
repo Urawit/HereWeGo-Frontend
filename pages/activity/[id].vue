@@ -37,7 +37,7 @@
                 <!-- side content -->
                 <aside class="w-full md:w-1/4 flex flex-col items-center px-3">
 
-                    <div class="w-full bg-white shadow flex flex-col my-4 p-6">
+                    <div class="w-full bg-white shadow flex flex-col my-4 p-6 rounded-lg">
                         <p class="pb-2"> <i class="far fa-calendar-alt "></i> {{
                             formatDateTime(activity.activity.start_date) }}</p>
                         <p class="pb-2"> <i class="fa-regular fa-clock"></i> {{ formatTime(activity.activity.start_date) }}
@@ -46,11 +46,19 @@
 
                     </div>
 
-                    <div class="w-full bg-white shadow flex flex-col my-4 p-6">
+                    <div class="w-full bg-white shadow flex flex-col my-4 p-6 rounded-lg">
                         <p class="text-xl font-semibold pb-5"></p>
                         <div class="grid grid-cols-3 gap-3">
-                            <img class="hover:opacity-75"
-                                :src="`http://localhost/images/${activity.activity.post_image_path}`">
+
+                            <div v-for="user of users" :keys="user.id" class="mb-4">
+                                <nuxt-link :to="`/user/${user.id}`">
+                                    <img v-if="user.image_path" class="profile-picture"
+                                        :src="`http://localhost/${user.image_path}`">
+                                    <img v-else src="@/assets/images/user-default.jpg" class="profile-picture">
+                                </nuxt-link>
+                            </div>
+
+
                             <!-- {{ activity.activity.post_image_path }} -->
                         </div>
 
@@ -59,31 +67,31 @@
                 </aside>
 
                 <!-- detail activity -->
-                <section class="w-full md:w-2/3 flex flex-col items-center px-3">
+                <section class="w-full md:w-2/3 flex flex-col items-center px-3 ml-20">
 
-                    <article class="flex flex-col shadow my-4">
+                    <div class="flex flex-col shadow my-4 rounded-lg">
                         <!-- Activity Image -->
                         <a>
-                            <img :src="`http://localhost/images/${activity.post_image_path}`">
+                            <img :src="`http://localhost/${activity.activity.post_image_path}`">
                         </a>
                         <div class="bg-white flex flex-col justify-start p-6">
                             <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
                                 activity.activity.master_activity_id }} </a>
                             <a class="text-3xl font-bold  pb-4">{{ activity.activity.detail }}</a>
+                            <a class="text-2xl  pb-4">{{ activity.activity.goal }}</a>
+                            <a class="text-2xl  pb-4">{{ activity.activity }}</a>
 
 
                         </div>
-                    </article>
+                    </div>
 
-                    
-                    <form @submit.prevent="onSubmit(activity.activity.id)" >
+
+                    <form @submit.prevent="onSubmit(activity.activity.id)">
                         <button type="submit" id="submit">
                             Join
                         </button>
 
                     </form>
-
-
 
 
                 </section>
@@ -113,22 +121,54 @@ const { data: activity, pending } = await useMyFetch<any>(
 )
 
 
-
-const { data: response } = await useMyFetch<any>(
-    `isMember/${route.params.id}`,
+const { data: members } = await useMyFetch<any>(
+    `get-all-member/${route.params.id}`,
     {}
 )
+
+const users = [];
+
+for (const member of members._rawValue) {
+    console.log("userid", member)
+    const { data: user } = await useMyFetch<any>(`find-user/${member.user_id}`, {});
+
+    // Push the user data to the users array
+    users.push(user.value);
+}
+
+// members._rawValue.forEach((member) => {
+//     const { data: user } = await useMyFetch<any>(
+//         `find-user/${member.user_id}`,
+//         {}
+//     )
+//     users.push(user);
+// });
+
+
+
+
+// const { data: member } = await useMyFetch<any>(
+//     `find-user/${members.id}`
+// )
+
+// const { data: master_activity } = await useMyFetch<any>(
+//     `get-master-activity-name/${activity.activity.master_activity_id}`,
+//     {}
+// )
+console.log("member", activity.value.activity.master_activity_id)
+
+
 const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
 
-if(isMember.value.success){
+if (isMember.value.success) {
     console.log("member");
 
-}else{
+} else {
     console.log("not-member");
-   // const submitButton = document.getElementById('submit');
-        // if (submitButton) {
-        //     submitButton.style.display = 'block';
-        // }
+    // const submitButton = document.getElementById('submit');
+    // if (submitButton) {
+    //     submitButton.style.display = 'block';
+    // }
 }
 
 
@@ -169,3 +209,14 @@ async function onSubmit(activityId: any) {
 }
 
 </script>
+
+<style>
+.profile-picture {
+    width: 67px;
+    height: 67px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #a19898;
+}
+</style>
