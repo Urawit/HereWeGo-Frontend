@@ -141,7 +141,7 @@
                             </section>
                         </div>
 
-                        <button type="submit"
+                        <button type="submit" @click="onSubmit"
                             class="w-full text-white bg-blue-500 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                             Create an account
                         </button>
@@ -215,8 +215,27 @@ async function onSubmit() {
         errorMessage.password_confirmation = "Passwords do not match.";
         isFormValid = false;
     }
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegex.test(formData.email)) {
+        errorMessage.email = "Invalid email format. Please use a valid email address.";
+        isFormValid = false;
+    }
 
-    console.log(isFormValid);
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(formData.username) || formData.username.length > 20) {
+        errorMessage.username = "Username must be English characters, digits, and underscores only, and length should be 20 characters or less.";
+        isFormValid = false;
+    }
+    if (formData.password.length < 8) {
+        errorMessage.password = "Password must be at least 8 characters long.";
+        isFormValid = false;
+    }
+    if (formData.phone.length !== 10) {
+        errorMessage.phone = "Phone number must be 10 digits.";
+        isFormValid = false;
+    }
+
+   
     if (!isFormValid) return;
     let registrationData = new FormData();
 

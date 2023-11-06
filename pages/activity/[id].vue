@@ -206,6 +206,8 @@ async function onSubmit(activityId: any) {
 
         alert("you alredy joined");
     }
+
+    
 }
 
 </script>
