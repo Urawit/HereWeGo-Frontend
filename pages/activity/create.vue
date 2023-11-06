@@ -4,7 +4,7 @@
             <h1 class="text-3xl font-bold mb-10 text-center">Create Your Activity</h1>
             <div class="bg-white rounded-lg border-gray-300 shadow dark:border px-20 py-10 sm:max-w-5xl">
                 <div>
-                    <form @submit.prevent="createActivity">
+                    <form @submit.prevent="createActivity()">
                         <div class="grid grid-cols-2 gap-20">
                             <div>
                                 <!-- Name -->
@@ -105,7 +105,7 @@
                                         <!-- <option v-for="category in categories" :value="category.id">{{ category.name }}
                                         </option> -->
                                     </select>
-                                    <span class="text-red-500" v-if="errors.category">Category is required</span>
+                                    <span class="text-red-500">{{ errors.category }}</span>
                                 </div>
 
                                 <div class="mb-4">
@@ -181,6 +181,37 @@ const getCurrentDateTime = () => {
     const minutes = now.getMinutes();
     const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     return formattedDate;
+};
+
+const isSaveValid = () => {
+    let valid = true;
+
+    if(!activityData.category){
+        valid = false;
+        errors.category = "category is required"
+    } else {
+        errors.category = ""
+    }
+
+    return valid;
+}
+
+const createActivity = async () => {
+    // const modal = document.getElementById("popup-modal");
+    console.log("create")
+
+    if (isSaveValid()) {
+        await useMyFetch("pawn", {
+          method: "POST",
+          body: activityData,
+        }
+        )
+        // modal.classList.remove("hidden");
+
+        activityData.name = '';
+
+        errors.name = '';
+    }
 };
 
 
