@@ -4,7 +4,7 @@
             <h1 class="text-3xl font-bold mb-10 text-center">Create Your Activity</h1>
             <div class="bg-white rounded-lg border-gray-300 shadow dark:border px-20 py-10 sm:max-w-5xl">
                 <div>
-                    <form @submit.prevent="createActivity()">
+                    <form >
                         <div class="grid grid-cols-2 gap-20">
                             <div>
                                 <!-- Name -->
@@ -144,7 +144,7 @@
                         </div>
                         <div class="text-center">
                             <!-- Centered button -->
-                            <button type="submit"
+                            <button type="submit" @click="createActivity"
                                 class="bg-blue-500 hover:bg-blue-700 text-white rounded-md px-4 py-2 mt-4">Create
                                 Activity</button>
                         </div>
@@ -256,12 +256,18 @@ function isSaveValid() {
         errors.image = ""
     }
 
+    if(valid){ console.log("valid") }
+    else { console.log("invalid") }
+
     return valid;
 };
 
 async function createActivity() {
+    console.log("start")
     // const modal = document.getElementById("popup-modal");
     if (isSaveValid()) {
+        console.log("savevalid")
+
         let dataToSend = new FormData();
 
         for (const key in activityData) {
@@ -304,6 +310,9 @@ async function createActivity() {
             // Handle errors here
             console.error("error ", error);
         }
+    }
+    else{
+        console.log("saveinvalid")
     }
 };
 
