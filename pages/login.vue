@@ -1,5 +1,5 @@
 <template>
-    <div class="pt-8 pb-8 flex items-center justify-center bg-gray-50">
+    <div id="app" class="pt-8 pb-8 flex items-center justify-center">
         <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
             <div class="flex flex-col p-6 sm:p-8">
                 <h2 class=" text-2xl text-center font-bold text-gray-800 text-left">
@@ -69,3 +69,22 @@ async function submit() {
     }
 }
 </script>
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f7fafc;
+}
+
+#app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+</style>
