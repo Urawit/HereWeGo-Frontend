@@ -178,7 +178,7 @@ const formData = reactive({
     firstname: "",
     lastname: "",
     phone: "",
-    image_path: "",
+    // image_path: "",
 });
 
 const errorMessage = reactive({
@@ -223,7 +223,7 @@ async function onSubmit() {
     if (uploadedFile.value) {
         registrationData.append("image", uploadedFile.value);
 
-        formData.image_path = (Math.floor( new Date().getTime() / 1000)).toString() + "." + imageFileType.value;
+        // formData.image_path = (Math.floor( new Date().getTime() / 1000)).toString() + "." + imageFileType.value;
     }
 
     Object.keys(formData).forEach((key) => {
@@ -240,11 +240,21 @@ async function onSubmit() {
         await navigateTo("/login");
 
         if (response.success && response.data) {
-            auth.setUser(formData.email, formData.username, formData.firstname, formData.lastname, formData.phone, formData.image_path);
+            // auth.setUser(formData.email, formData.username, formData.firstname, formData.lastname, formData.phone, formData.image_path);
             await navigateTo("/login");
         } else {
             console.log(response);
         }
+
+        formData.email = ''
+        formData.username = ''
+        formData.password = ''
+        formData.password_confirmation = ''
+        formData.firstname = ''
+        formData.lastname = ''
+        formData.phone = ''
+        // formData.image_path = ''
+
     } catch (error) {
         console.error("Error:", error);
         if (error.response && error.response.data) {

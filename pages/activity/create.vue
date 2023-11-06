@@ -4,7 +4,7 @@
             <h1 class="text-3xl font-bold mb-10 text-center">Create Your Activity</h1>
             <div class="bg-white rounded-lg border-gray-300 shadow dark:border px-20 py-10 sm:max-w-5xl">
                 <div>
-                    <form @submit.prevent="createActivity">
+                    <form @submit.prevent="createActivity()">
                         <div class="grid grid-cols-2 gap-20">
                             <div>
                                 <!-- Name -->
@@ -12,19 +12,19 @@
                                     <label for="name" class="block font-semibold">Name</label>
                                     <input type="text" id="name" v-model="activityData.name"
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required>
-                                    <span class="text-red-500" v-if="errors.name">Name is required</span>
+                                    <p class="text-red-500">{{ errors.name }}</p>
                                 </div>
 
                                 <!-- Start Date (use a date-time picker library) -->
                                 <div class="mb-4">
-                                    <label for="start_date" class="block font-semibold">Event starts</label>
+                                    <label for="start_date" class="block font-semibold">Activity starts</label>
                                     <input v-if="!activityData.end_date" type="datetime-local" id="start_date"
                                         v-model="activityData.start_date" :min="getCurrentDateTime()"
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required />
                                     <input v-else type="datetime-local" id="start_date" v-model="activityData.start_date"
-                                        :max="activityData.end_date" :min="getCurrentDateTime()" class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80"
-                                        required />
-                                    <span class="text-red-500" v-if="errors.start_date">Start Date is required</span>
+                                        :max="activityData.end_date" :min="getCurrentDateTime()"
+                                        class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required />
+                                    <p class="text-red-500">{{ errors.start_date }}</p>
                                 </div>
 
                                 <!-- Maximum -->
@@ -32,7 +32,7 @@
                                     <label for="maximum" class="block font-semibold">Maximum Joinable</label>
                                     <input type="number" id="maximum" v-model="activityData.maximum"
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required>
-                                    <span class="text-red-500" v-if="errors.maximum">Maximum is required</span>
+                                    <p class="text-red-500">{{ errors.maximum }}</p>
                                 </div>
 
                                 <div class="container max-h-55 mx-auto items-center py-5">
@@ -91,36 +91,53 @@
                                             </label>
                                         </div>
                                     </section>
+
+                                    <p class="text-red-500">{{ errors.image }}</p>
                                 </div>
                             </div>
                             <div>
                                 <!-- Category Dropdown (fetch data from backend) -->
                                 <div class="mb-4">
-                                    <label for="category" class="block font-semibold">Types of Event</label>
+                                    <label for="category" class="block font-semibold">Types of Activity</label>
                                     <select id="category" v-model="activityData.category"
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required>
-                                        <option disabled value="">Select event type</option>
-                                        <option v-for="category in categories" :value="category.id">{{ category.name }}
-                                        </option>
+                                        <option disabled value="">Select activity type</option>
+                                        <option v-for="(category, index) in categories" :key="index" :value="category.id">{{
+                                            category.name }}</option>
                                     </select>
-                                    <span class="text-red-500" v-if="errors.category">Category is required</span>
+                                    <p class="text-red-500">{{ errors.category }}</p>
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="end_date" class="block font-semibold">Event Ends</label>
+                                    <label for="end_date" class="block font-semibold">Activity Ends</label>
                                     <input v-if="activityData.start_date" type="datetime-local" id="end_date"
                                         v-model="activityData.end_date" :min="activityData.start_date"
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required />
                                     <input v-else type="datetime-local" id="end_date" v-model="activityData.end_date"
                                         :min="getCurrentDateTime()" class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80"
                                         required />
-                                    <span class="text-red-500" v-if="errors.end_date">End Date is required</span>
+                                    <p class="text-red-500">{{ errors.end_date }}</p>
+                                </div>
+
+                                <!-- Location -->
+                                <div class="mb-4">
+                                    <label for="location" class="block font-semibold">Location</label>
+                                    <input type="text" id="location" v-model="activityData.location"
+                                        class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80" required>
+                                    <p class="text-red-500">{{ errors.location }}</p>
                                 </div>
 
                                 <!-- Optional: Detail -->
                                 <div class="mb-4">
                                     <label for="detail" class="block font-semibold">Description</label>
                                     <textarea id="detail" v-model="activityData.detail"
+                                        class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80"></textarea>
+                                </div>
+
+                                <!-- Optional: Goal -->
+                                <div class="mb-4">
+                                    <label for="goal" class="block font-semibold">Goal</label>
+                                    <textarea id="goal" v-model="activityData.goal"
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80"></textarea>
                                 </div>
                             </div>
@@ -141,6 +158,13 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import useMyFetch from '~/composables/useMyFetch';
+
+const { data: response } = await useMyFetch<any>("allActivities", {})
+const categories = response.value;
+
+const authStore = useAuthStore();
+const user_id = computed(() => authStore.user.id);
 
 const previewUrl = ref(null);
 const selectedFile = ref(null);
@@ -150,11 +174,13 @@ const imageFileType = ref(null);
 
 const activityData = reactive({
     name: "",
-    maximum: "",
+    maximum: null,
     start_date: "",
     end_date: "",
     category: "",
     detail: "",
+    goal: "",
+    location: "",
 });
 
 const errors = reactive({
@@ -164,6 +190,8 @@ const errors = reactive({
     end_date: "",
     category: "",
     detail: "",
+    location: "",
+    image: "",
 });
 
 const getCurrentDateTime = () => {
@@ -175,6 +203,108 @@ const getCurrentDateTime = () => {
     const minutes = now.getMinutes();
     const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     return formattedDate;
+};
+
+function isSaveValid() {
+    let valid = true;
+
+    if (!activityData.category) {
+        valid = false;
+        errors.category = "activity type is required"
+    } else {
+        errors.category = ""
+    }
+    if (!activityData.name) {
+        valid = false;
+        errors.name = "name is required"
+    } else {
+        errors.name = ""
+    }
+    if (!activityData.maximum) {
+        valid = false;
+        errors.maximum = "maximum joinable is required"
+    } else {
+        if (activityData.maximum <= 1) {
+            errors.maximum = "maximum must be more than one"
+            valid = false;
+        } else {
+            errors.maximum = ""
+        }
+    }
+    if (!activityData.start_date) {
+        valid = false;
+        errors.start_date = "start date is required"
+    } else {
+        errors.category = ""
+    }
+    if (!activityData.end_date) {
+        valid = false;
+        errors.end_date = "end date is required"
+    } else {
+        errors.end_date = ""
+    }
+    if (!activityData.location) {
+        valid = false;
+        errors.location = "location is required"
+    } else {
+        errors.location = ""
+    }
+    if (!uploadedFile.value) {
+        valid = false;
+        errors.image = "image is required"
+    } else {
+        errors.image = ""
+    }
+
+    return valid;
+};
+
+async function createActivity() {
+    // const modal = document.getElementById("popup-modal");
+    if (isSaveValid()) {
+        let dataToSend = new FormData();
+
+        for (const key in activityData) {
+            dataToSend.append(key, activityData[key]);
+        }
+
+        dataToSend.append("image", uploadedFile.value);
+        dataToSend.append("user_id", user_id.value);
+
+        try {
+            const { data: response } = await useMyFetch<any>("createActivity", {
+                method: "POST",
+                body: dataToSend,
+            });
+
+            if (response.value !== null) {
+                activityData.name = '';
+                activityData.maximum = null;
+                activityData.start_date = '';
+                activityData.end_date = '';
+                activityData.category = '';
+                activityData.detail = '';
+                activityData.goal = '';
+                activityData.location = '';
+
+                errors.name = '';
+                errors.maximum = '';
+                errors.start_date = '';
+                errors.end_date = '';
+                errors.category = '';
+                errors.detail = '';
+                errors.image = '';
+
+                console.log("successs")
+            }
+            else {
+                console.log("fail");
+            }
+        } catch (error) {
+            // Handle errors here
+            console.error("error ", error);
+        }
+    }
 };
 
 

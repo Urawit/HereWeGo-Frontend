@@ -5,6 +5,7 @@ export const useAuthStore = defineStore('auth', {
     return {
       token: "",
       user: {
+        id: "",
         email: "",
         username: "",
         firstname: "",
@@ -21,13 +22,16 @@ export const useAuthStore = defineStore('auth', {
     setNewToken(token: string) {
       this.token = token
     },
-    setUser(email: string,
+    setUser(
+            id: string,
+            email: string,
             username: string,
             firstname: string,
             lastname: string,
             phone: string,
             image_path: string)
     {
+      this.user.id = id
       this.user.email = email
       this.user.username = username
       this.user.firstname = firstname
@@ -37,6 +41,7 @@ export const useAuthStore = defineStore('auth', {
     },
     clear() {
       this.token = ''
+      this.user.id = ''
       this.user.email = ''
       this.user.username = ''
       this.user.firstname = ''
