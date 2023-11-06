@@ -120,11 +120,13 @@ const { data: response } = await useMyFetch<any>(
 )
 const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
 
-if(isMember.value.success){
+if(isMember.value){
+    if(isMember.value.success){
     console.log("member");
 
 }else{
     console.log("not-member");
+}
    // const submitButton = document.getElementById('submit');
         // if (submitButton) {
         //     submitButton.style.display = 'block';
@@ -159,13 +161,7 @@ async function onSubmit(activityId: any) {
         method: "POST",
     });
 
-    if (response.value.success) {
-        alert("success joined")
-        //hide button
-    } else {
-
-        alert("you alredy joined");
-    }
+    
 }
 
 </script>

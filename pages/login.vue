@@ -60,43 +60,50 @@ async function submit() {
     const { data: response, error } = await useMyFetch<any>('auth/login', {
         method: 'POST',
         body: formData
-    })
+    });
 
     Object.keys(errors).forEach((key) => {
         errors[key] = "";
     });
     let isFormValid = true;
     Object.keys(formData).forEach((key) => {
-        if (!formData[key] && key != "image_path") {
+        if (!formData[key] && key !== "image_path") {
             errors[key] = `${key} is required.`;
             isFormValid = false;
-            console.log(errors[key]);
-            console.log(errors);
         }
     });
 
-   
-
-
     if (response.value !== null) {
-        const { access_token, token_type } = response.value
+        // Assuming the response includes the associated email with the password
+        const { email, access_token, token_type } = response.value;
+        if (email !== formData.email) {
+            errors.email = "Email and password do not match.";
+            isFormValid = false;
+        }
+
         if (access_token !== "") {
-            auth.setNewToken(access_token)
+            auth.setNewToken(access_token);
             const { data: user, error } = await useMyFetch<any>('auth/me', {
                 method: 'POST'
-            })
+            });
+
             if (user.value !== null) {
                 auth.setUser(user.value.id, user.value.email, user.value.username, user.value.firstname, user.value.lastname, user.value.phone, user.value.image_path);
-                await navigateTo('/')
+                await navigateTo('/');
             } else {
-                auth.clear()
-                errorMessage.value = "please try again"
+                auth.clear();
+                errorMessage.value = "Please try again";
             }
         }
     } else {
-        errorMessage.value = error.value?.data.message
+        errorMessage.value = error.value?.data.message;
+    }
+
+    if (!isFormValid) {
+        return; // Display errors and prevent login
     }
 }
+
 </script>
 
 <style>
