@@ -59,11 +59,11 @@
             <!-- Dropdown Content -->
             <div class="dropdown-content" :class="{ open: isDropdownOpen }">
               <ul>
-                <li>
-                  <MenuLink to="/profile">
+                <MenuLink to="/profile">
+                  <li>
                     Profile
-                  </MenuLink>
-                </li>
+                  </li>
+                </MenuLink>
                 <li @click="logout">Logout</li>
               </ul>
             </div>
