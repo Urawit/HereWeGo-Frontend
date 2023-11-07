@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import { useAuthStore } from "~/stores/useAuthStore";
 
-const auth = await useAuthStore()
+const auth = useAuthStore()
 const errorMessage = ref<string | undefined>("")
 const formData = reactive({ email: "", password: "" })
 

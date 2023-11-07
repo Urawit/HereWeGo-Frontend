@@ -29,6 +29,7 @@
     "flowbite": "^1.8.1",
     "font-awesome": "^4.7.0",
     "pinia": "^2.1.7",
+    "pusher-js": "^8.3.0",
     "yarn": "^1.22.19"
   }
 }
