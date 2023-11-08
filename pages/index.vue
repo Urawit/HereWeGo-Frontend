@@ -40,7 +40,7 @@
 import useMyFetch from '~/composables/useMyFetch';
 
 const { data: response } = await useMyFetch<any>("getActiveActivities", {})
-console.log(response)
+console.log("response:", response)
 const activities = response.value.activities;
 
 console.log(activities)

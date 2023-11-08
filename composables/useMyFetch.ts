@@ -5,6 +5,7 @@ export default async function <T>(path: string, options: {}) {
   const config = useRuntimeConfig()
   const auth = useAuthStore()
   const headers : Headers = {
+    'Content-Type': 'application/json',
     "Accept": "application/json"
   }
   if (auth.isLogin) {

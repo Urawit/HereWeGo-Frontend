@@ -76,9 +76,9 @@
                         <div class="bg-white flex flex-col justify-start p-6">
                             <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
                                 activity.activity.master_activity_id }} </a>
-                            <a class="text-3xl font-bold  pb-4">{{ activity.activity.detail }}</a>
-                            <a class="text-2xl  pb-4">{{ activity.activity.goal }}</a>
-                
+                            <a class="text-3xl font-bold  pb-4"> {{activity.activity.detail }}</a>
+                            <a class="text-2xl  pb-4">GOAL : {{ activity.activity.goal }}</a>
+                            
 
 
                         </div>
