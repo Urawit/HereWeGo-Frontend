@@ -78,7 +78,7 @@
                                 activity.activity.master_activity_id }} </a>
                             <a class="text-3xl font-bold  pb-4">{{ activity.activity.detail }}</a>
                             <a class="text-2xl  pb-4">{{ activity.activity.goal }}</a>
-                            <a class="text-2xl  pb-4">{{ activity.activity }}</a>
+                
 
 
                         </div>
