@@ -10,12 +10,38 @@
           @click="selectFriend(friend)"
           class="friendSelect"
         >
-          {{ friend.username }}
+        <img
+            class="icon"
+            :src="`http://localhost/${friend.image_path}` ? `http://localhost/${friend.image_path}` : 'path-to-default-image'"
+            alt="Friend Image"
+          />
+          <span>{{ friend.username }}</span>
         </button>
       </div>
     </div>
+
+    <div class="activitiesContainer">
+      <div class="activitiesList">
+        <p class="message-content"> ACTIVITITY LIST </p>
+        <button
+          v-for="activity in activities"
+          :key="activity.id"
+          :value="activity.id"
+          @click="selectGroup(activity)"
+          class="activitySelect"
+        >
+        <img
+            class="icon"
+            :src="`http://localhost/${activity.post_image_path}` ? `http://localhost/${activity.post_image_path}` : 'path-to-default-image'"
+            alt="Activity Image"
+          />
+          <span>{{ activity.name }}</span>
+        </button>
+      </div>
+    </div>
+
     <div class="chatContainer">
-      <div ref="hasScrolledToBottom" class="chatMessages">
+      <!-- <div ref="hasScrolledToBottom" class="chatMessages">
         <div
           v-for="chat in chats"
           :key="chat.id"
@@ -25,7 +51,20 @@
           <p class="message-user">{{ chat.user_id === auth.user.id ? auth.user.username : friendName }}</p>
           <p class="message-content">{{ chat.message }}</p>
         </div>
+      </div> -->
+
+      <div ref="hasScrolledToBottom" class="chatMessages">
+        <div
+          v-for="chat in chats"
+          :key="chat.id"
+          class="message"
+          :class="{ 'my-message': chat.user_id === auth.user.id }"
+        >
+          <p class="message-user">{{ chat.user_id === auth.user.id ? auth.user.username : getMemberName(chat.user_id) }}</p>
+          <p class="message-content">{{ chat.message }}</p>
+        </div>
       </div>
+
       <div class="inputContainer">
         <input
           id="btn-input"
@@ -51,7 +90,12 @@
 
   const chats = ref([]);
   const friends = ref([]);
-  const chat_id = ref(''); 
+  const activities = ref([]);
+  const members = ref([]);
+  const memberName = ref(''); 
+  const key = ref('');
+  const activityName = ref('');
+  const chat_id = ref('');
   const friendName = ref(''); 
   const auth = useAuthStore();
   const newMessage = ref(''); 
@@ -67,7 +111,9 @@
   onMounted(() => {
     if (auth.isLogin) {
       fetchMessages();
+      // fetchGroupMessages();
       myFriends();
+      myGroup();
     }
   });
 
@@ -85,32 +131,92 @@
     }
   };
 
-  const selectFriend = (friend: any) => {
-    chat_id.value = friend.friend_id;
-    friendName.value = friend.username;
-    fetchMessages();
-    console.log(chat_id.value);
+  const myGroup = async () => {
+    try {
+      const response = await axios.get('http://localhost/api/show-member-activity', options);
+      console.log("printing data activites");
+      console.log(response.data.activities);
+      console.log("printing all member");
+      console.log(response.data.allMembers);
+      console.log("done");
+      activities.value = response.data.activities;
+      members.value = response.data.allMembers;
+    } catch (error) {
+      console.error('Error cant get group activity:', error);
+    }
+  }
+
+  const getMemberName = (userId: number) => {
+    const member = allMembers.find((member) => member.id === userId);
+  if (member) {
+    return member.username;
+  } else {
+    return "User not found";
+  }
   };
 
-  const fetchMessages = async () => {
-    const requestData = JSON.stringify({ friend_id: chat_id.value });
+  const selectGroup = (activity: any) => {
+    console.log(activity.id);
+    chat_id.value = activity.id;
+    key.value = "activity";
+    activityName.value = activity.name;
+    fetchGroupMessages();
+  }
+
+  const fetchGroupMessages = async () => {
+    const requestData = JSON.stringify({ activity_id: chat_id.value });
     try {
-      const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
+      const response = await axios.post('http://localhost/api/fetch-group-messages', requestData, options);
       console.log(response.data.chats);
       chats.value = response.data.chats;
       scrollBottom();
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      console.error('Error fetching group messages:', error);
     }
   };
 
-  const storeMessage = async () => {
-    const requestData = JSON.stringify({ friend_id: chat_id.value, message: newMessage.value });
+  const storeGroupMessage = async () => {
+    const requestData = JSON.stringify({ activity_id: chat_id.value, message: newMessage.value });
     try {
-      await axios.post('http://localhost/api/messageStore', requestData, options);
+      await axios.post('http://localhost/api/group-message-store', requestData, options);
       newMessage.value = '';
     } catch (error) {
-      console.error('Error adding message:', error);
+      console.error('Error adding group message:', error);
+    }
+  };
+
+  const selectFriend = (friend: any) => {
+    chat_id.value = friend.friend_id;
+    friendName.value = friend.username;
+    key.value = "friend";
+    fetchMessages();
+    console.log(chat_id.value);
+  };
+
+
+  const fetchMessages = async () => {
+      const requestData = JSON.stringify({ friend_id: chat_id.value });
+      try {
+        const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
+        console.log(response.data.chats);
+        chats.value = response.data.chats;
+        scrollBottom();
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+  };
+
+  const storeMessage = async () => {
+    if (key.value == "friend") {
+      const requestData = JSON.stringify({ friend_id: chat_id.value, message: newMessage.value });
+      try {
+        await axios.post('http://localhost/api/messageStore', requestData, options);
+        newMessage.value = '';
+      } catch (error) {
+        console.error('Error adding message:', error);
+      }
+    } else {
+      storeGroupMessage();
     }
   };
 
@@ -125,9 +231,14 @@
     cluster: 'ap1'
   });
 
-  const channel = pusher.subscribe('Private');
-  channel.bind('Message', () => {
+  const channel1 = pusher.subscribe('Private');
+  channel1.bind('Message', () => {
     fetchMessages();
+  });
+
+  const channel2 = pusher.subscribe('Group');
+  channel2.bind('Message', () => {
+    fetchGroupMessages();
   });
 </script>
 
@@ -136,6 +247,13 @@
     display: flex;
     min-height: 100%;
     min-width: 100%;
+  }
+
+  .icon {
+    width: 30px; 
+    height: 30px; 
+    margin-right: 10px; 
+    border-radius: 50%; 
   }
 
   .friendsContainer {
@@ -152,14 +270,51 @@
     gap: 10px;
   }
 
-  .friendSelect {
+  /* .friendSelect {
     background-color: #57606e;
     border-radius: 8px;
     padding: 10px;
     color: #fff;
     text-align: center;
     cursor: pointer;
+  } */
+
+  .friendSelect,
+  .activitySelect {
+    display: flex;
+    align-items: center;
+    background-color: #57606e;
+    border-radius: 8px;
+    padding: 5px 10px; 
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px; 
+    margin-bottom: 10px; /* Adjust the margin as needed */
   }
+
+  .activitiesContainer {
+    width: 25%;
+    background-color: #394049;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .activitiesList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* .activitySelect {
+    background-color: #57606e;
+    border-radius: 8px;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+  } */
 
   .chatContainer {
     flex-grow: 1;
