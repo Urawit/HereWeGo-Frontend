@@ -41,18 +41,6 @@
     </div>
 
     <div class="chatContainer">
-      <!-- <div ref="hasScrolledToBottom" class="chatMessages">
-        <div
-          v-for="chat in chats"
-          :key="chat.id"
-          class="message"
-          :class="{ 'my-message': chat.user_id === auth.user.id }"
-        >
-          <p class="message-user">{{ chat.user_id === auth.user.id ? auth.user.username : friendName }}</p>
-          <p class="message-content">{{ chat.message }}</p>
-        </div>
-      </div> -->
-
       <div ref="hasScrolledToBottom" class="chatMessages">
         <div
           v-for="chat in chats"
@@ -60,7 +48,8 @@
           class="message"
           :class="{ 'my-message': chat.user_id === auth.user.id }"
         >
-          <p class="message-user">{{ chat.user_id === auth.user.id ? auth.user.username : getMemberName(chat.user_id) }}</p>
+          <p class="message-user" :class="{ 'hidden': selection == 'friend' }">{{ chat.user_id === auth.user.id ? auth.user.username : getMemberName(chat.user_id) }}</p>
+          <p class="message-user" :class="{ 'hidden': selection == 'activity' }">{{ chat.user_id === auth.user.id ? auth.user.username : friendName }}</p>
           <p class="message-content">{{ chat.message }}</p>
         </div>
       </div>
@@ -93,7 +82,7 @@
   const activities = ref([]);
   const members = ref([]);
   const memberName = ref(''); 
-  const key = ref('');
+  const selection = ref('');
   const activityName = ref('');
   const chat_id = ref('');
   const friendName = ref(''); 
@@ -124,7 +113,7 @@
   const myFriends = async () => {
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
-      console.log(response.data.friends);
+      console.log("friends:", response.data.friends);
       friends.value = response.data.friends;
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -134,10 +123,8 @@
   const myGroup = async () => {
     try {
       const response = await axios.get('http://localhost/api/show-member-activity', options);
-      console.log("printing data activites");
-      console.log(response.data.activities);
-      console.log("printing all member");
-      console.log(response.data.allMembers);
+      console.log("activities:", response.data.activities);
+      console.log("allMembers:", response.data.allMembers);
       console.log("done");
       activities.value = response.data.activities;
       members.value = response.data.allMembers;
@@ -158,21 +145,17 @@
   const selectGroup = (activity: any) => {
     console.log(activity.id);
     chat_id.value = activity.id;
-    key.value = "activity";
+    selection.value = "activity";
     activityName.value = activity.name;
     fetchGroupMessages();
   }
 
-  const fetchGroupMessages = async () => {
-    const requestData = JSON.stringify({ activity_id: chat_id.value });
-    try {
-      const response = await axios.post('http://localhost/api/fetch-group-messages', requestData, options);
-      console.log(response.data.chats);
-      chats.value = response.data.chats;
-      scrollBottom();
-    } catch (error) {
-      console.error('Error fetching group messages:', error);
-    }
+  const selectFriend = (friend: any) => {
+    chat_id.value = friend.friend_id;
+    friendName.value = friend.username;
+    selection.value = "friend";
+    fetchMessages();
+    console.log(chat_id.value);
   };
 
   const storeGroupMessage = async () => {
@@ -185,30 +168,10 @@
     }
   };
 
-  const selectFriend = (friend: any) => {
-    chat_id.value = friend.friend_id;
-    friendName.value = friend.username;
-    key.value = "friend";
-    fetchMessages();
-    console.log(chat_id.value);
-  };
-
-
-  const fetchMessages = async () => {
-      const requestData = JSON.stringify({ friend_id: chat_id.value });
-      try {
-        const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
-        console.log(response.data.chats);
-        chats.value = response.data.chats;
-        scrollBottom();
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
-  };
-
   const storeMessage = async () => {
-    if (key.value == "friend") {
+    if (selection.value == "friend") {
       const requestData = JSON.stringify({ friend_id: chat_id.value, message: newMessage.value });
+      console.log("requestData:", requestData);
       try {
         await axios.post('http://localhost/api/messageStore', requestData, options);
         newMessage.value = '';
@@ -218,6 +181,30 @@
     } else {
       storeGroupMessage();
     }
+  };
+
+  const fetchGroupMessages = async () => {
+    const requestData = JSON.stringify({ activity_id: chat_id.value });
+    try {
+      const response = await axios.post('http://localhost/api/fetch-group-messages', requestData, options);
+      console.log("chats", response.data.chats);
+      chats.value = response.data.chats;
+      scrollBottom();
+    } catch (error) {
+      console.error('Error fetching group messages:', error);
+    }
+  };
+
+  const fetchMessages = async () => {
+      const requestData = JSON.stringify({ friend_id: chat_id.value });
+      try {
+        const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
+        console.log("chats:", response.data.chats);
+        chats.value = response.data.chats;
+        scrollBottom();
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
   };
 
   const scrollBottom = () => {
@@ -400,4 +387,9 @@
     border-radius: 4px;
     cursor: pointer;
   }
+
+  .hidden {
+    display: none;
+  }
+
 </style>
