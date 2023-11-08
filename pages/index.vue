@@ -37,11 +37,35 @@
 </template>
   
 <script setup lang="ts">
-import useMyFetch from '~/composables/useMyFetch';
+  import axios from 'axios';
+  import { useAuthStore } from "~/stores/useAuthStore";
+  import { ref, onMounted, onUpdated } from 'vue';
 
-const { data: response } = await useMyFetch<any>("getActiveActivities", {})
-console.log("response:", response)
-const activities = response.value.activities;
+  const activities = ref([]);
+  const auth = useAuthStore();
+  const options = {
+    headers: {
+      'Content-Type': 'application/json',
+      "Accept": "application/json",
+      "Authorization": `Bearer ${auth.token}`, 
+    }
+  }
 
-console.log(activities)
+  onMounted(() => {
+    if (auth.isLogin) {
+      getAllActivities();
+    } else {
+      navigateTo('/login');
+    }
+  });
+
+  const getAllActivities = async () => {
+    try {
+      const response = await axios.get('http://localhost/api/getAllActivities', options);
+      console.log("activities:", response.data.activities);
+      activities.value = response.data.activities;
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
 </script>

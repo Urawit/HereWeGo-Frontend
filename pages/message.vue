@@ -81,6 +81,8 @@
     if (auth.isLogin) {
       myChats();
       myGroup();
+    } else {
+      navigateTo('/login');
     }
   });
 
