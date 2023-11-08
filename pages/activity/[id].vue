@@ -42,6 +42,7 @@
                         <p class="pb-2"> <i class="fa-regular fa-clock"></i> {{ formatTime(activity.activity.start_date) }}
                             - {{ formatTime(activity.activity.end_date) }}</p>
                         <p class="pb-2"> <i class="fa-solid fa-map-pin"></i> {{ activity.activity.location }} </p>
+                        <p class="pb-2"> <i class="fa-solid fa-map-pin"></i> is a member {{ isMemberBoolean }} </p>
 
                     </div>
 
@@ -76,17 +77,14 @@
                         <div class="bg-white flex flex-col justify-start p-6">
                             <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
                                 activity.activity.master_activity_id }} </a>
-                            <a class="text-3xl font-bold  pb-4"> {{activity.activity.detail }}</a>
+                            <a class="text-3xl font-bold  pb-4"> {{ activity.activity.detail }}</a>
                             <a class="text-2xl  pb-4">GOAL : {{ activity.activity.goal }}</a>
-                            
-
-
                         </div>
                     </div>
 
 
                     <form @submit.prevent="onSubmit(activity.activity.id)">
-                        <button type="submit" id="submit">
+                        <button v-if="!isMemberBoolean" type="submit" id="submit" @click="refreshPage">
                             Join
                         </button>
 
@@ -124,6 +122,10 @@ const { data: members } = await useMyFetch<any>(
     `get-all-member/${route.params.id}`,
     {}
 )
+const refreshPage = () => {
+    window.location.reload();
+  };
+
 
 const users = [];
 
@@ -158,18 +160,8 @@ console.log("member", activity.value.activity.master_activity_id)
 
 
 const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
-
-if (isMember.value.success) {
-    console.log("member");
-
-} else {
-    console.log("not-member");
-    // const submitButton = document.getElementById('submit');
-    // if (submitButton) {
-    //     submitButton.style.display = 'block';
-    // }
-}
-
+console.log(isMember.value.success);
+const isMemberBoolean = isMember.value.success;
 
 
 
@@ -198,15 +190,20 @@ async function onSubmit(activityId: any) {
         method: "POST",
     });
 
-    if (response.value.success) {
-        alert("success joined")
-        //hide button
-    } else {
 
-        alert("you alredy joined");
+
+    if (isMember.value.success) {
+        console.log("member");
+        alert("you alredy joined")
+
+    } else {
+        console.log("not-member");
+        alert("success join")
+
     }
 
-    
+
+
 }
 
 </script>
