@@ -59,7 +59,7 @@
                   >
                     <MenuLink :to="`/message`">
                       <p class="frontheader">
-                        {{friend.username}}
+                        {{friend.name}}
                       </p>
                       <p>
                         {{friend.message}}
@@ -153,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted } from "vue";
+  import { computed, onMounted, onUpdated } from "vue";
   import { useAuthStore } from "~/stores/useAuthStore";
   import Pusher from 'pusher-js';
   import axios from 'axios';
@@ -178,19 +178,16 @@
   }
 
   onMounted(() => {
-    if (auth.isLogin) {
-      myNotification();
-      myFriends();
-      allUser();
-    }
+    myNotification();
+    myFriends();
+    allUser();
   });
 
   const getLinkNotification = (notification: any) => {
-    if (notification.header === 'Friend Request') {
-      //return `/friend/${notification.friend_id}`;
-      return `/friend`;
-    } else if (notification.header === 'Activity') {
-      return `/activity/${notification.activity_id}`;
+    if (notification.header.includes('Friend')) {
+      return `/profile/${notification.id}`;
+    } else if (notification.header.includes('Activity')) {
+      return `/activity/${notification.id}`;
     }
   }
 
@@ -207,8 +204,8 @@
   const myFriends = async () => {
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
-      console.log("friends:", response.data.friends);
-      friends.value = response.data.friends;
+      console.log("friends:", response.data.chats);
+      friends.value = response.data.chats;
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
