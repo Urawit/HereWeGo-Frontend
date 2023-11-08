@@ -59,7 +59,7 @@
                   >
                     <MenuLink :to="`/message`">
                       <p class="frontheader">
-                        {{friend.username}}
+                        {{friend.name}}
                       </p>
                       <p>
                         {{friend.message}}
@@ -207,8 +207,8 @@
   const myFriends = async () => {
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
-      console.log("friends:", response.data.friends);
-      friends.value = response.data.friends;
+      console.log("friends:", response.data.chats);
+      friends.value = response.data.chats;
     } catch (error) {
       console.error('Error fetching messages:', error);
     }

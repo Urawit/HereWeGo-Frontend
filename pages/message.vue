@@ -4,38 +4,19 @@
       <div class="friendsList">
         <p class="message-content"> FRIEND LIST </p>
         <button
-          v-for="friend in friends"
-          :key="friend.friend_id"
-          :value="friend.friend_id"
-          @click="selectFriend(friend)"
+          v-for="chat in allChats"
+          :key="chat.id"
+          :value="chat.id"
+          @click="selectChat(chat)"
           class="friendSelect"
         >
-        <img
+          <img
             class="icon"
-            :src="`http://localhost/${friend.image_path}` ? `http://localhost/${friend.image_path}` : 'path-to-default-image'"
+            :src="`http://localhost/${chat.image_path}` ? `http://localhost/${chat.image_path}` : 'path-to-default-image'"
             alt="Friend Image"
           />
-          <span>{{ friend.username }}</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="activitiesContainer">
-      <div class="activitiesList">
-        <p class="message-content"> ACTIVITITY LIST </p>
-        <button
-          v-for="activity in activities"
-          :key="activity.id"
-          :value="activity.id"
-          @click="selectGroup(activity)"
-          class="activitySelect"
-        >
-        <img
-            class="icon"
-            :src="`http://localhost/${activity.post_image_path}` ? `http://localhost/${activity.post_image_path}` : 'path-to-default-image'"
-            alt="Activity Image"
-          />
-          <span>{{ activity.name }}</span>
+          <span>{{ chat.name }}</span>
+          <span>{{ chat.message }}</span>
         </button>
       </div>
     </div>
@@ -48,8 +29,8 @@
           class="message"
           :class="{ 'my-message': chat.user_id === auth.user.id }"
         >
-          <p class="message-user" :class="{ 'hidden': selection == 'friend' }">{{ chat.user_id === auth.user.id ? auth.user.username : getMemberName(chat.user_id) }}</p>
-          <p class="message-user" :class="{ 'hidden': selection == 'activity' }">{{ chat.user_id === auth.user.id ? auth.user.username : friendName }}</p>
+          <p class="message-user" :class="{ 'hidden': selection == 'friend' }">{{ chat.user_id === auth.user.id ? auth.user.username : chat.username }}</p>
+          <p class="message-user" :class="{ 'hidden': selection == 'activity' }">{{ chat.user_id === auth.user.id ? auth.user.username : chatName }}</p>
           <p class="message-content">{{ chat.message }}</p>
         </div>
       </div>
@@ -78,14 +59,13 @@
   import axios from 'axios';
 
   const chats = ref([]);
-  const friends = ref([]);
+  const allChats = ref([]);
   const activities = ref([]);
   const members = ref([]);
-  const memberName = ref(''); 
   const selection = ref('');
-  const activityName = ref('');
   const chat_id = ref('');
-  const friendName = ref(''); 
+  const friend_id = ref(''); 
+  const chatName = ref(''); 
   const auth = useAuthStore();
   const newMessage = ref(''); 
   const hasScrolledToBottom = ref(null);
@@ -99,9 +79,7 @@
 
   onMounted(() => {
     if (auth.isLogin) {
-      fetchMessages();
-      // fetchGroupMessages();
-      myFriends();
+      myChats();
       myGroup();
     }
   });
@@ -110,11 +88,11 @@
     scrollBottom();
   });
 
-  const myFriends = async () => {
+  const myChats = async () => {
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
-      console.log("friends:", response.data.friends);
-      friends.value = response.data.friends;
+      console.log("all chats:", response.data.chats);
+      allChats.value = response.data.chats;
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -133,29 +111,45 @@
     }
   }
 
-  const getMemberName = (userId: number) => {
-    const member = allMembers.find((member) => member.id === userId);
-  if (member) {
-    return member.username;
-  } else {
-    return "User not found";
+  const selectChat = (chat: any) => {
+    console.log("chat:", chat);
+    chat_id.value = chat.id;
+    chatName.value = chat.name
+    if (chat.friend_id) {
+      selection.value = "friend";
+      console.log("friend");
+      friend_id.value = chat.friend_id
+      fetchMessages();
+    } else {
+      selection.value = "activity";
+      console.log("activity");
+      fetchGroupMessages();
+    }
+    
   }
+
+  const fetchGroupMessages = async () => {
+    const requestData = JSON.stringify({ activity_id: chat_id.value });
+    try {
+      const response = await axios.post('http://localhost/api/fetch-group-messages', requestData, options);
+      console.log("group chats", response.data.chats);
+      chats.value = response.data.chats;
+      scrollBottom();
+    } catch (error) {
+      console.error('Error fetching group messages:', error);
+    }
   };
 
-  const selectGroup = (activity: any) => {
-    console.log(activity.id);
-    chat_id.value = activity.id;
-    selection.value = "activity";
-    activityName.value = activity.name;
-    fetchGroupMessages();
-  }
-
-  const selectFriend = (friend: any) => {
-    chat_id.value = friend.friend_id;
-    friendName.value = friend.username;
-    selection.value = "friend";
-    fetchMessages();
-    console.log(chat_id.value);
+  const fetchMessages = async () => {
+      const requestData = JSON.stringify({ friend_id: friend_id.value });
+      try {
+        const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
+        console.log("private chats:", response.data.chats);
+        chats.value = response.data.chats;
+        scrollBottom();
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
   };
 
   const storeGroupMessage = async () => {
@@ -181,30 +175,6 @@
     } else {
       storeGroupMessage();
     }
-  };
-
-  const fetchGroupMessages = async () => {
-    const requestData = JSON.stringify({ activity_id: chat_id.value });
-    try {
-      const response = await axios.post('http://localhost/api/fetch-group-messages', requestData, options);
-      console.log("chats", response.data.chats);
-      chats.value = response.data.chats;
-      scrollBottom();
-    } catch (error) {
-      console.error('Error fetching group messages:', error);
-    }
-  };
-
-  const fetchMessages = async () => {
-      const requestData = JSON.stringify({ friend_id: chat_id.value });
-      try {
-        const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
-        console.log("chats:", response.data.chats);
-        chats.value = response.data.chats;
-        scrollBottom();
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
   };
 
   const scrollBottom = () => {
