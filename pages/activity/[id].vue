@@ -26,7 +26,7 @@
                     <p class="pb-2"> <i class="fa-regular fa-clock"></i> {{ formatTime(activity.activity.start_date) }}
                         - {{ formatTime(activity.activity.end_date) }}</p>
                     <p class="pb-2"> <i class="fa-solid fa-map-pin"></i> {{ activity.activity.location }} </p>
-                    <p class="pb-2"> <i class="fa-solid fa-map-pin"></i> isMember {{ isMember }} </p>
+                
                   
 
                 </div>
@@ -61,7 +61,7 @@
                     </a>
                     <div class="bg-white flex flex-col justify-start p-6">
                         <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
-                            activity.activity.master_activity_id }} </a>
+                           MasterActivityName }} </a>
                         <a class="text-3xl font-bold  pb-4"> {{ activity.activity.detail }}</a>
                         <a class="text-2xl  pb-4">GOAL : {{ activity.activity.goal }}</a>
                     </div>
@@ -88,16 +88,11 @@
 
 import { useAuthStore } from '~/stores/useAuthStore'
 import swal from 'sweetalert';
-const auth = useAuthStore()
-
-
 const route = useRoute()
 const { data: activity, pending } = await useMyFetch<any>(
     `getActivity/${route.params.id}`,
     {}
 )
-
-
 const { data: members } = await useMyFetch<any>(
     `get-all-member/${route.params.id}`,
     {}
@@ -105,14 +100,19 @@ const { data: members } = await useMyFetch<any>(
 const refreshPage = () => {
     location.reload();
 };
+const { data: MasterActivityName } = await useMyFetch<any>(
+    `get-master-activity-name/${activity.value.activity.master_activity_id}`,
+    {}
+)
+
+console.log(activity.value.activity.master_activity_id, MasterActivityName)
+
 
 
 const users = [];
-
 for (const member of members._rawValue) {
     console.log("userid", member)
     const { data: user } = await useMyFetch<any>(`find-user/${member.user_id}`, {});
-
     // Push the user data to the users array
     users.push(user.value);
 }
@@ -124,10 +124,6 @@ for (const member of members._rawValue) {
 //     )
 //     users.push(user);
 // });
-
-
-
-
 // const { data: member } = await useMyFetch<any>(
 //     `find-user/${members.id}`
 // )
@@ -137,21 +133,16 @@ for (const member of members._rawValue) {
 //     {}
 // )
 console.log("member", activity.value.activity.master_activity_id)
-
-
 const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
 const isMemberBoolean = isMember.value.success;
-
 const formatDateTime = (dateTime: string | number | Date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateTime).toLocaleString(undefined, options);
 };
-
 const formatTime = (dateTime: string | number | Date) => {
     const options = { hour: '2-digit', minute: '2-digit' };
     return new Date(dateTime).toLocaleString(undefined, options);
 };
-
 async function onSubmit(activityId: any) {
 
     const { data: response, error } = await useMyFetch<any>(`joinActivity/${activityId}`, {
@@ -171,9 +162,6 @@ async function onSubmit(activityId: any) {
         });
 
     }
-
-
-
 }
 
 </script>
