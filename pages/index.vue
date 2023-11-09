@@ -14,6 +14,7 @@
                 <h2 class="text-xl font-bold text-blue-500 line-clamp-1">{{ activity.name }}</h2>
                 <p class="text-sm mt-1.5 font-bold line-clamp-1">{{ activity.master_name }}</p>
                 <p class="text-sm mt-1.5">{{ activity.maximum }} PEOPLE</p>
+                <p class="text-sm mt-1.5 line-clamp-1">{{ activity.location }}</p>
                 <p class="text-sm mt-1.5">
                   {{
                     new Date(activity.start_date).getDate().toString().padStart(2, '0') + ' ' +
@@ -24,7 +25,6 @@
                     })
                   }}
                 </p>
-                <p class="text-sm text-gray-400 mt-1.5 line-clamp-2">{{ activity.detail }}</p>
               </div>
             </div>
           </nuxt-link>
