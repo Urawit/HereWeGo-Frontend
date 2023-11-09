@@ -49,6 +49,7 @@
               <img src="@/assets/images/icon/chat.png"/>
               <p class="frontheader">Chat</p>
             </button>
+            <div class="chat-alert" :class="{ open: chats_counter }"/>
             <div class="dropdown-chat" :class="{ open: isDropdownChat }">
               <ul>
                   <li
@@ -153,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted, onUpdated } from "vue";
+  import { computed, onMounted } from "vue";
   import { useAuthStore } from "~/stores/useAuthStore";
   import Pusher from 'pusher-js';
   import axios from 'axios';
@@ -165,10 +166,11 @@
   const isDropdownNotification = ref(false); 
   const isDropdownUser = ref(false); 
   const isDropdownChat = ref(false); 
-  const notifications = ref([])
+  const notifications = ref([]);
   const friends = ref([]);
   const users = ref([]);
   const notifications_counter = ref(0)
+  const chats_counter = ref(0)
   const options = {
     headers: {
       'Content-Type': 'application/json',
@@ -177,9 +179,23 @@
     }
   }
 
-  onMounted(() => {
+  const pusher = new Pusher('301d0ac46c750e11bff0', {
+    cluster: 'ap1'
+  });
+
+  const channel = pusher.subscribe('Notifications');
+  channel.bind('Notification' + auth.user.id, () => {
+    console.log("Pusher Notification");
+    notifications_counter.value += 1;
     myNotification();
+  });
+  channel.bind('Message' + auth.user.id, () => {
+    console.log("Pusher Message", chats_counter.value);
+    chats_counter.value += 1;
     myFriends();
+  });
+
+  onMounted(() => {
     allUser();
   });
 
@@ -202,6 +218,14 @@
   };
 
   const myFriends = async () => {
+    const auth = useAuthStore();
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": `Bearer ${auth.token}`, 
+      }
+    }
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
       console.log("friends:", response.data.chats);
@@ -212,6 +236,14 @@
   };
 
   const myNotification = async () => {
+    const auth = useAuthStore();
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": `Bearer ${auth.token}`, 
+      }
+    }
     try {
       const response = await axios.get('http://localhost/api/myNotification', options);
       console.log(response.data.notifications);
@@ -238,6 +270,8 @@
   }
 
   const toggleDropdownChat = () => {
+    myFriends();
+    chats_counter.value = 0;
     isDropdownChat.value = !isDropdownChat.value;
     isDropdownNotification.value = false;
     isDropdownUser.value = false;
@@ -252,6 +286,7 @@
   }
 
   const toggleDropdownNotification = () => {
+    myNotification();
     notifications_counter.value = 0;
     isDropdownNotification.value = !isDropdownNotification.value;
     isDropdownProfile.value = false;
@@ -267,19 +302,10 @@
   }
 
   const logout = () => {
+    pusher.unbind_all();
     auth.clear();
     window.location.href = '/login';
   };
-
-  const pusher = new Pusher('e63b96afbc7499aee175', {
-    cluster: 'ap1'
-  });
-
-  const channel = pusher.subscribe('Private');
-  channel.bind('Notification', () => {
-    notifications_counter.value += 1;
-    myNotification();
-  });
 </script>
 
 <style scoped>
@@ -337,6 +363,18 @@
   height: 25px;
 }
 
+.chat-alert,
+.notification-alert {
+  position: absolute;
+  background-color: red;
+  border-radius: 10px;
+  width: 10px;
+  height: 10px;
+  top: 5px;
+  left: 25px;
+  display: none;
+}
+
 .dropdown-chat,
 .dropdown-user,
 .dropdown-notification {
@@ -355,10 +393,11 @@
   overflow-y: scroll;
 }
 
+.chat-alert.open,
+.notification-alert.open,
 .dropdown-profile.open,
 .dropdown-chat.open,
 .dropdown-user.open,
-.notification-alert.open,
 .dropdown-notification.open {
   display: block;
 }
@@ -404,18 +443,6 @@
 .dropdown-user::-webkit-scrollbar-thumb:hover,
 .dropdown-notification::-webkit-scrollbar-thumb:hover {
   background-color: #555;
-}
-
-.notification-chat,
-.notification-alert {
-  position: absolute;
-  background-color: red;
-  border-radius: 10px;
-  width: 10px;
-  height: 10px;
-  top: 6px;
-  left: 15px;
-  display: none;
 }
 
 .underline {
