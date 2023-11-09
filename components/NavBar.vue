@@ -154,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted, onUpdated } from "vue";
+  import { computed, onMounted } from "vue";
   import { useAuthStore } from "~/stores/useAuthStore";
   import Pusher from 'pusher-js';
   import axios from 'axios';
@@ -179,7 +179,7 @@
     }
   }
 
-  const pusher = new Pusher('e63b96afbc7499aee175', {
+  const pusher = new Pusher('301d0ac46c750e11bff0', {
     cluster: 'ap1'
   });
 
@@ -190,7 +190,7 @@
     myNotification();
   });
   channel.bind('Message' + auth.user.id, () => {
-    console.log("Pusher Message");
+    console.log("Pusher Message", chats_counter.value);
     chats_counter.value += 1;
     myFriends();
   });
@@ -302,9 +302,7 @@
   }
 
   const logout = () => {
-
-
-    pusher.disconnect();
+    pusher.unbind_all();
     auth.clear();
     window.location.href = '/login';
   };
@@ -365,6 +363,18 @@
   height: 25px;
 }
 
+.chat-alert,
+.notification-alert {
+  position: absolute;
+  background-color: red;
+  border-radius: 10px;
+  width: 10px;
+  height: 10px;
+  top: 5px;
+  left: 25px;
+  display: none;
+}
+
 .dropdown-chat,
 .dropdown-user,
 .dropdown-notification {
@@ -383,10 +393,11 @@
   overflow-y: scroll;
 }
 
+.chat-alert.open,
+.notification-alert.open,
 .dropdown-profile.open,
 .dropdown-chat.open,
 .dropdown-user.open,
-.notification-alert.open,
 .dropdown-notification.open {
   display: block;
 }
@@ -432,18 +443,6 @@
 .dropdown-user::-webkit-scrollbar-thumb:hover,
 .dropdown-notification::-webkit-scrollbar-thumb:hover {
   background-color: #555;
-}
-
-.chat-alert,
-.notification-alert {
-  position: absolute;
-  background-color: red;
-  border-radius: 10px;
-  width: 10px;
-  height: 10px;
-  top: 6px;
-  left: 15px;
-  display: none;
 }
 
 .underline {

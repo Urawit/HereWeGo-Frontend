@@ -192,7 +192,7 @@
     }
   };
 
-  const pusher = new Pusher('e63b96afbc7499aee175', {
+  const pusher = new Pusher('301d0ac46c750e11bff0', {
     cluster: 'ap1'
   });
   const channel1 = pusher.subscribe('Private');
