@@ -131,7 +131,7 @@
   const isDropdownProfile = ref(false); 
   const isDropdownNotification = ref(false); 
   const isDropdownFriend = ref(false); 
-  const notifications = ref([])
+  const notifications = ref([]);
   const friends = ref([]);
   const notifications_counter = ref(0)
   const options = {
