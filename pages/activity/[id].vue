@@ -99,39 +99,16 @@
 import { useAuthStore } from '~/stores/useAuthStore'
 import swal from 'sweetalert';
 const route = useRoute()
-const { data: activity, pending } = await useMyFetch<any>(
-    `getActivity/${route.params.id}`,
-    {}
-)
-const { data: members } = await useMyFetch<any>(
-    `get-all-member/${route.params.id}`,
-    {}
-)
-const refreshPage = () => {
-    location.reload();
-};
-const { data: MasterActivityName } = await useMyFetch<any>(
-    `get-master-activity-name/${activity.value.activity.master_activity_id}`,
-    {}
-)
-console.log(activity.value.activity.master_activity_id, MasterActivityName)
+const { data: activity, pending } = await useMyFetch<any>(`getActivity/${route.params.id}`,{})
+const { data: members } = await useMyFetch<any>(`get-all-member/${route.params.id}`,{})
+const { data: MasterActivityName } = await useMyFetch<any>(`get-master-activity-name/${activity.value.activity.master_activity_id}`,{})
+
 
 const users = [];
-for (const member of members._rawValue) {
-    console.log("userid", member)
-    const { data: user } = await useMyFetch<any>(`find-user/${member.id}`, {});
-    users.push(user.value);
-}
-
-console.log("Users Array:", users);
-users.forEach((user, index) => {
-    console.log(`User ${index + 1} Data:`, user.id);
-});
-
-console.log("member", activity.value.activity.master_activity_id)
-
 const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
 const isMemberBoolean = isMember.value.success;
+
+
 const formatDateTime = (dateTime: string | number | Date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateTime).toLocaleString(undefined, options);
@@ -140,6 +117,22 @@ const formatTime = (dateTime: string | number | Date) => {
     const options = { hour: '2-digit', minute: '2-digit' };
     return new Date(dateTime).toLocaleString(undefined, options);
 };
+
+
+for (const member of members._rawValue) {
+    console.log("userid", member)
+    const { data: user } = await useMyFetch<any>(`find-user/${member.id}`, {});
+    users.push(user.value);
+}
+users.forEach((user, index) => {
+    console.log(`User ${index + 1} Data:`, user.id);
+});
+
+
+const refreshPage = () => {
+    location.reload();
+};
+
 async function onSubmit(activityId: any) {
     const { data: response, error } = await useMyFetch<any>(`joinActivity/${activityId}`, {
         method: "POST",
