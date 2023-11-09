@@ -49,6 +49,7 @@
               <img src="@/assets/images/icon/chat.png"/>
               <p class="frontheader">Chat</p>
             </button>
+            <div class="chat-alert" :class="{ open: chats_counter }"/>
             <div class="dropdown-chat" :class="{ open: isDropdownChat }">
               <ul>
                   <li
@@ -169,6 +170,7 @@
   const friends = ref([]);
   const users = ref([]);
   const notifications_counter = ref(0)
+  const chats_counter = ref(0)
   const options = {
     headers: {
       'Content-Type': 'application/json',
@@ -176,6 +178,22 @@
       "Authorization": `Bearer ${auth.token}`, 
     }
   }
+
+  const pusher = new Pusher('e63b96afbc7499aee175', {
+    cluster: 'ap1'
+  });
+
+  const channel = pusher.subscribe('Notifications');
+  channel.bind('Notification' + auth.user.id, () => {
+    console.log("Pusher Notification");
+    notifications_counter.value += 1;
+    myNotification();
+  });
+  channel.bind('Message' + auth.user.id, () => {
+    console.log("Pusher Message");
+    chats_counter.value += 1;
+    myFriends();
+  });
 
   onMounted(() => {
     allUser();
@@ -253,6 +271,7 @@
 
   const toggleDropdownChat = () => {
     myFriends();
+    chats_counter.value = 0;
     isDropdownChat.value = !isDropdownChat.value;
     isDropdownNotification.value = false;
     isDropdownUser.value = false;
@@ -283,19 +302,12 @@
   }
 
   const logout = () => {
+
+
+    pusher.disconnect();
     auth.clear();
     window.location.href = '/login';
   };
-
-  const pusher = new Pusher('e63b96afbc7499aee175', {
-    cluster: 'ap1'
-  });
-
-  const channel = pusher.subscribe('Private');
-  channel.bind('Notification', () => {
-    notifications_counter.value += 1;
-    myNotification();
-  });
 </script>
 
 <style scoped>
@@ -422,7 +434,7 @@
   background-color: #555;
 }
 
-.notification-chat,
+.chat-alert,
 .notification-alert {
   position: absolute;
   background-color: red;

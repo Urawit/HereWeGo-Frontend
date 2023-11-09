@@ -123,8 +123,8 @@ const { data: members } = await useMyFetch<any>(
     {}
 )
 const refreshPage = () => {
-    window.location.reload();
-  };
+  navigateTo('/');
+};
 
 
 const users = [];
