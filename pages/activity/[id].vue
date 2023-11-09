@@ -1,19 +1,5 @@
 <template>
-    <!DOCTYPE html>
-    <html lang="en">
 
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="author" content="David Grzyb">
-        <meta name="description" content="">
-
-
-
-    </head>
-
-    <body class="bg-white font-family-karla">
 
         <div v-if="pending">
             Pending...
@@ -98,9 +84,7 @@
 
 
 
-    </body>
 
-    </html>
 </template>
   
   

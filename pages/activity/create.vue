@@ -4,7 +4,7 @@
             <h1 class="text-3xl font-bold mb-10 text-center">Create Your Activity</h1>
             <div class="bg-white rounded-lg border-gray-300 shadow dark:border px-20 py-10 sm:max-w-5xl">
                 <div>
-                    <form >
+                    <form>
                         <div class="grid grid-cols-2 gap-20">
                             <div>
                                 <!-- Name -->
@@ -144,7 +144,7 @@
                         </div>
                         <div class="text-center">
                             <!-- Centered button -->
-                            <button type="submit" @click="createActivity"
+                            <button type="button" @click="createActivity"
                                 class="bg-blue-500 hover:bg-blue-700 text-white rounded-md px-4 py-2 mt-4">Create
                                 Activity</button>
                         </div>
@@ -256,7 +256,7 @@ function isSaveValid() {
         errors.image = ""
     }
 
-    if(valid){ console.log("valid") }
+    if (valid) { console.log("valid") }
     else { console.log("invalid") }
 
     return valid;
@@ -268,50 +268,67 @@ async function createActivity() {
     if (isSaveValid()) {
         console.log("savevalid")
 
-        let dataToSend = new FormData();
+        const dataToSend = {
+            name: activityData.name,
+            maximum: activityData.maximum,
+            start_date: activityData.start_date,
+            end_date: activityData.end_date,
+            master_activity_id: activityData.category,
+            detail: activityData.detail,
+            goal: activityData.goal,
+            location: activityData.location,
+            user_id: user_id.value,
+        };
 
-        for (const key in activityData) {
-            dataToSend.append(key, activityData[key]);
+        const formData = new FormData();
+
+        for (const key in dataToSend) {
+            formData.append(key, dataToSend[key]);
         }
 
-        dataToSend.append("image", uploadedFile.value);
-        dataToSend.append("user_id", user_id.value);
+        formData.append('image', uploadedFile.value);
 
         try {
-            const { data: response } = await useMyFetch<any>("createActivity", {
+            const response = await fetch('http://localhost/api/createActivity', {
                 method: "POST",
-                body: dataToSend,
+                body: formData,  // Send the form data
             });
 
-            if (response.value !== null) {
-                activityData.name = '';
-                activityData.maximum = null;
-                activityData.start_date = '';
-                activityData.end_date = '';
-                activityData.category = '';
-                activityData.detail = '';
-                activityData.goal = '';
-                activityData.location = '';
+            if (response.ok) {
+                const responseData = await response.json();
 
-                errors.name = '';
-                errors.maximum = '';
-                errors.start_date = '';
-                errors.end_date = '';
-                errors.category = '';
-                errors.detail = '';
-                errors.image = '';
+                if (responseData) {
+                    // Clear form fields and error messages
+                    activityData.name = '';
+                    activityData.maximum = null;
+                    activityData.start_date = '';
+                    activityData.end_date = '';
+                    activityData.category = '';
+                    activityData.detail = '';
+                    activityData.goal = '';
+                    activityData.location = '';
 
-                console.log("successs")
-            }
-            else {
-                console.log("fail");
+                    for (const key in errors) {
+                        errors[key] = '';
+                    }
+
+                    // Clear previewed image
+                    previewUrl.value = null;
+                    selectedFile.value = null;
+
+                    console.log("Activity created successfully");
+                } else {
+                    console.log("Failed to create the activity");
+                }
+            } else {
+                console.log("HTTP request failed");
             }
         } catch (error) {
             // Handle errors here
             console.error("error ", error);
         }
     }
-    else{
+    else {
         console.log("saveinvalid")
     }
 };
@@ -320,6 +337,7 @@ async function createActivity() {
 const previewImage = (event) => {
     const file = event.target.files ? event.target.files[0] : null; // ตรวจสอบว่ามี files หรือไม่
     if (file) {
+        console.log("Selected file:", file);
         const reader = new FileReader();
 
         reader.onload = () => {
