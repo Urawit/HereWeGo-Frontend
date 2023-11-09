@@ -178,8 +178,6 @@
   }
 
   onMounted(() => {
-    myNotification();
-    myFriends();
     allUser();
   });
 
@@ -202,6 +200,14 @@
   };
 
   const myFriends = async () => {
+    const auth = useAuthStore();
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": `Bearer ${auth.token}`, 
+      }
+    }
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
       console.log("friends:", response.data.chats);
@@ -212,6 +218,14 @@
   };
 
   const myNotification = async () => {
+    const auth = useAuthStore();
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": `Bearer ${auth.token}`, 
+      }
+    }
     try {
       const response = await axios.get('http://localhost/api/myNotification', options);
       console.log(response.data.notifications);
@@ -238,6 +252,7 @@
   }
 
   const toggleDropdownChat = () => {
+    myFriends();
     isDropdownChat.value = !isDropdownChat.value;
     isDropdownNotification.value = false;
     isDropdownUser.value = false;
@@ -252,6 +267,7 @@
   }
 
   const toggleDropdownNotification = () => {
+    myNotification();
     notifications_counter.value = 0;
     isDropdownNotification.value = !isDropdownNotification.value;
     isDropdownProfile.value = false;

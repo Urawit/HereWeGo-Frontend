@@ -121,14 +121,23 @@
       selection.value = "friend";
       console.log("friend");
       friend_id.value = chat.friend_id
-      fetchMessages();
+      fetchPrivateMessages();
     } else {
       selection.value = "activity";
       console.log("activity");
       fetchGroupMessages();
     }
-    
   }
+
+  const storeMessage = async () => {
+    if (selection.value == "friend") {
+      storePrivateMessage();
+      fetchPrivateMessages();
+    } else {
+      storeGroupMessage();
+      fetchGroupMessages();
+    }
+  };
 
   const fetchGroupMessages = async () => {
     const requestData = JSON.stringify({ activity_id: chat_id.value });
@@ -140,18 +149,20 @@
     } catch (error) {
       console.error('Error fetching group messages:', error);
     }
+    myChats();
   };
 
-  const fetchMessages = async () => {
-      const requestData = JSON.stringify({ friend_id: friend_id.value });
-      try {
-        const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
-        console.log("private chats:", response.data.chats);
-        chats.value = response.data.chats;
-        scrollBottom();
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
+  const fetchPrivateMessages = async () => {
+    const requestData = JSON.stringify({ friend_id: friend_id.value });
+    try {
+      const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
+      console.log("private chats:", response.data.chats);
+      chats.value = response.data.chats;
+      scrollBottom();
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+    myChats();
   };
 
   const storeGroupMessage = async () => {
@@ -164,18 +175,14 @@
     }
   };
 
-  const storeMessage = async () => {
-    if (selection.value == "friend") {
-      const requestData = JSON.stringify({ friend_id: chat_id.value, message: newMessage.value });
-      console.log("requestData:", requestData);
-      try {
-        await axios.post('http://localhost/api/messageStore', requestData, options);
-        newMessage.value = '';
-      } catch (error) {
-        console.error('Error adding message:', error);
-      }
-    } else {
-      storeGroupMessage();
+  const storePrivateMessage = async () => {
+    const requestData = JSON.stringify({ friend_id: friend_id.value, message: newMessage.value });
+    console.log("requestData:", requestData);
+    try {
+      await axios.post('http://localhost/api/messageStore', requestData, options);
+      newMessage.value = '';
+    } catch (error) {
+      console.error('Error adding message:', error);
     }
   };
 
@@ -191,8 +198,8 @@
   });
 
   const channel1 = pusher.subscribe('Private');
-  channel1.bind('Message', () => {
-    fetchMessages();
+  channel1.bind('Message' + auth.user.id, () => {
+    fetchPrivateMessages();
   });
 
   const channel2 = pusher.subscribe('Group');
