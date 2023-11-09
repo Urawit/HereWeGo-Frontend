@@ -53,6 +53,7 @@ const auth = useAuthStore()
 const errorMessage = ref<string | undefined>("")
 const formData = reactive({ email: "", password: "" })
 
+
 const loginData = reactive({
     email: "",
     password: null,

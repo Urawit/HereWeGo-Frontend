@@ -220,7 +220,7 @@ const showOnlyMyCreation = () => {
 
 const showOnlyMyActivities = () => {
   activities.value = activities.value.filter(activity => {
-    return activity.activity_members.some(
+    return activity.activity_members.filter(
       member => member.user_id === auth.user.id
     );
   });
