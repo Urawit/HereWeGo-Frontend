@@ -12,7 +12,7 @@
               <img v-else src="@/assets/images/default-image.png" alt="Card Image" class="w-full h-60 object-cover p-12">
               <div class="p-4">
                 <h2 class="text-xl font-bold text-blue-500 line-clamp-1">{{ activity.name }}</h2>
-                <p class="text-sm mt-1.5 font-bold line-clamp-1">{{ activity.master_activity_name }}</p>
+                <p class="text-sm mt-1.5 font-bold line-clamp-1">{{ activity.master_name }}</p>
                 <p class="text-sm mt-1.5">{{ activity.maximum }} PEOPLE</p>
                 <p class="text-sm mt-1.5">
                   {{
@@ -57,24 +57,12 @@ onMounted(() => {
   }
 });
 
-const getMasterActivityName = async (masterActivityId) => {
-  try {
-    const response = await axios.get(`http://localhost/api/get-master-activity-name/${masterActivityId}`, options);
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching master activity name for ID ${masterActivityId}:`, error);
-  }
-};
-
 const getAllActivities = async () => {
   try {
     const response = await axios.get('http://localhost/api/getActiveActivities', options);
     console.log("activities:", response.data.activities);
     activities.value = response.data.activities;
 
-    for (const activity of activities.value) {
-      activity.master_activity_name = await getMasterActivityName(activity.master_activity_id);
-    }
   } catch (error) {
     console.error('Error fetching messages:', error);
   }
