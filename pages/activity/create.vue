@@ -298,7 +298,8 @@ async function createActivity() {
             if (response.ok) {
                 const responseData = await response.json();
 
-                if (responseData) {
+                if (responseData)  {
+
                     // Clear form fields and error messages
                     activityData.name = '';
                     activityData.maximum = null;
