@@ -82,6 +82,7 @@
       myChats();
       myGroup();
     } else {
+      pusher.disconnect();
       navigateTo('/login');
     }
   });
@@ -149,7 +150,6 @@
     } catch (error) {
       console.error('Error fetching group messages:', error);
     }
-    myChats();
   };
 
   const fetchPrivateMessages = async () => {
@@ -162,7 +162,6 @@
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
-    myChats();
   };
 
   const storeGroupMessage = async () => {
@@ -193,18 +192,23 @@
     }
   };
 
-  const pusher = new Pusher('e63b96afbc7499aee175', {
+  const pusher = new Pusher('301d0ac46c750e11bff0', {
     cluster: 'ap1'
   });
-
   const channel1 = pusher.subscribe('Private');
   channel1.bind('Message' + auth.user.id, () => {
-    fetchPrivateMessages();
+    if (selection.value == "friend") {
+      fetchPrivateMessages();
+    }
+    myChats();
   });
 
   const channel2 = pusher.subscribe('Group');
-  channel2.bind('Message', () => {
-    fetchGroupMessages();
+  channel2.bind('Message' + auth.user.id, () => {
+    if (selection.value == "activity") {
+      fetchGroupMessages();
+    }
+    myChats();
   });
 </script>
 
