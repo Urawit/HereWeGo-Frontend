@@ -1,7 +1,7 @@
 <template>
     <div class="bg-gray-50 min-h-screen flex items-center justify-center">
         <div class="max-w-7xl mx-auto px-20 py-20">
-            <h1 class="text-3xl font-bold mb-10 text-center">Create Your Activity</h1>
+            <h1 class="text-3xl font-bold mb-10 text-center">Edit Your Activity</h1>
             <div class="bg-white rounded-lg border-gray-300 shadow dark:border px-20 py-10 sm:max-w-5xl">
                 <div>
                     <form @submit.prevent="createActivity()">
@@ -92,7 +92,7 @@
                                         </div>
                                     </section>
 
-                                    <p class="text-red-500">{{ errors.image }}</p>
+                                    <!-- <p class="text-red-500">{{ errors.image }}</p> -->
                                 </div>
                             </div>
                             <div>
@@ -145,8 +145,7 @@
                         <div class="text-center">
                             <!-- Centered button -->
                             <button type="submit"
-                                class="bg-blue-500 hover:bg-blue-700 text-white rounded-md px-4 py-2 mt-4">Create
-                                Activity</button>
+                                class="bg-blue-500 hover:bg-blue-700 text-white rounded-md px-4 py-2 mt-4">Save</button>
                         </div>
                     </form>
                 </div>
@@ -166,7 +165,7 @@ console.log(activity.value.activity)
 const { data: response } = await useMyFetch<any>("allActivities", {})
 const categories = response.value;
 
-const previewUrl = ref(activity.value.activity.post_image_path);
+const previewUrl = ref(`http://localhost/${activity.value.activity.post_image_path}`);
 const selectedFile = ref(null);
 const dropzone = ref(null);
 const uploadedFile = ref(null);
@@ -191,7 +190,7 @@ const errors = reactive({
     category: "",
     detail: "",
     location: "",
-    image: "",
+    // image: "",
 });
 
 const getCurrentDateTime = () => {
@@ -249,12 +248,12 @@ function isSaveValid() {
     } else {
         errors.location = ""
     }
-    if (!uploadedFile.value) {
-        valid = false;
-        errors.image = "image is required"
-    } else {
-        errors.image = ""
-    }
+    // if (!uploadedFile.value) {
+    //     valid = false;
+    //     errors.image = "image is required"
+    // } else {
+    //     errors.image = ""
+    // }
 
     return valid;
 };
@@ -268,7 +267,13 @@ async function createActivity() {
             dataToSend.append(key, activityData[key]);
         }
 
-        dataToSend.append("post_image", uploadedFile.value);
+        if(previewUrl.value){
+            dataToSend.append("post_image", uploadedFile.value);
+        }
+
+        dataToSend.forEach((value, key) => {
+                console.log(`Field Name: ${key}, Field Value: ${value}`);
+            });
 
         try {
             const { data: response } = await useMyFetch<any>(`editActivity/${activity.value.activity.id}`, {
@@ -276,13 +281,8 @@ async function createActivity() {
                 body: dataToSend,
             });
 
-            
-            dataToSend.forEach((value, key) => {
-                    console.log(`Field Name: ${key}, Field Value: ${value}`);
-                });
 
-
-            if (response.value !== null) {
+            if (response.status) { //response.value !== null
                 activityData.name = '';
                 activityData.maximum = null;
                 activityData.start_date = '';
