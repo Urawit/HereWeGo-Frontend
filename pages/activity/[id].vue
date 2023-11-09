@@ -1,5 +1,5 @@
 <template>
-    <!DOCTYPE html>
+    <!-- <!DOCTYPE html>
     <html lang="en">
 
 
@@ -11,9 +11,9 @@
 
 
 
-    </head>
-
-    <body class="bg-white font-family-karla">
+    </head> -->
+<!-- 
+    <body class="bg-white font-family-karla"> -->
 
         <div v-if="pending">
             Pending...
@@ -98,9 +98,9 @@
 
 
 
-    </body>
+    <!-- </body>
 
-    </html>
+    </html> -->
 </template>
   
   
@@ -163,15 +163,6 @@ const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, 
 console.log(isMember.value.success);
 const isMemberBoolean = isMember.value.success;
 
-
-
-
-
-
-
-
-
-
 const formatDateTime = (dateTime: string | number | Date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateTime).toLocaleString(undefined, options);
@@ -185,12 +176,9 @@ const formatTime = (dateTime: string | number | Date) => {
 
 async function onSubmit(activityId: any) {
 
-
     const { data: response, error } = await useMyFetch<any>(`joinActivity/${activityId}`, {
         method: "POST",
     });
-
-
 
     if (isMember.value.success) {
         console.log("member");
@@ -201,8 +189,6 @@ async function onSubmit(activityId: any) {
         alert("success join")
 
     }
-
-
 
 }
 

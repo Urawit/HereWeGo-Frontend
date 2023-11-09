@@ -22,6 +22,9 @@
     </div>
 
     <div class="chatContainer">
+      <button @click="">
+        <p class="chatTitle">{{ selection === 'friend' ? chatName : 'Group Activity' }}</p>
+      </button>
       <div ref="hasScrolledToBottom" class="chatMessages">
         <div
           v-for="chat in chats"
@@ -45,7 +48,7 @@
           v-model="newMessage"
           @keyup.enter="storeMessage"
         />
-        <button class="btn-send" @click="storeMessage">Send</button>
+        <!-- <button class="btn-send" @click="storeMessage">Send</button> -->
       </div>
     </div>
   </div>
@@ -105,7 +108,6 @@
       const response = await axios.get('http://localhost/api/show-member-activity', options);
       console.log("activities:", response.data.activities);
       console.log("allMembers:", response.data.allMembers);
-      console.log("done");
       activities.value = response.data.activities;
       members.value = response.data.allMembers;
     } catch (error) {
@@ -280,7 +282,7 @@
     background-color: #394049;
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 50px;
     overflow: hidden;
     position: relative; 
   }
@@ -358,6 +360,12 @@
     color: #fff;
     border-radius: 4px;
     cursor: pointer;
+  }
+
+  .chatTitle {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 10px;
   }
 
   .hidden {
