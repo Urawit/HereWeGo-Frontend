@@ -4,16 +4,23 @@
       <div class="friendsList">
         <p class="message-content"> FRIEND LIST </p>
         <button
-          v-for="friend in friends"
-          :key="friend.friend_id"
-          :value="friend.friend_id"
-          @click="selectFriend(friend)"
+          v-for="chat in allChats"
+          :key="chat.id"
+          :value="chat.id"
+          @click="selectChat(chat)"
           class="friendSelect"
         >
-          {{ friend.username }}
+          <img
+            class="icon"
+            :src="`http://localhost/${chat.image_path}` ? `http://localhost/${chat.image_path}` : 'path-to-default-image'"
+            alt="Friend Image"
+          />
+          <span>{{ chat.name }}</span>
+          <span>{{ chat.message }}</span>
         </button>
       </div>
     </div>
+
     <div class="chatContainer">
       <div ref="hasScrolledToBottom" class="chatMessages">
         <div
@@ -22,10 +29,12 @@
           class="message"
           :class="{ 'my-message': chat.user_id === auth.user.id }"
         >
-          <p class="message-user">{{ chat.user_id === auth.user.id ? auth.user.username : friendName }}</p>
+          <p class="message-user" :class="{ 'hidden': selection == 'friend' }">{{ chat.user_id === auth.user.id ? auth.user.username : chat.username }}</p>
+          <p class="message-user" :class="{ 'hidden': selection == 'activity' }">{{ chat.user_id === auth.user.id ? auth.user.username : chatName }}</p>
           <p class="message-content">{{ chat.message }}</p>
         </div>
       </div>
+
       <div class="inputContainer">
         <input
           id="btn-input"
@@ -50,9 +59,13 @@
   import axios from 'axios';
 
   const chats = ref([]);
-  const friends = ref([]);
-  const chat_id = ref(''); 
-  const friendName = ref(''); 
+  const allChats = ref([]);
+  const activities = ref([]);
+  const members = ref([]);
+  const selection = ref('');
+  const chat_id = ref('');
+  const friend_id = ref(''); 
+  const chatName = ref(''); 
   const auth = useAuthStore();
   const newMessage = ref(''); 
   const hasScrolledToBottom = ref(null);
@@ -66,8 +79,11 @@
 
   onMounted(() => {
     if (auth.isLogin) {
-      fetchMessages();
-      myFriends();
+      myChats();
+      myGroup();
+    } else {
+      pusher.disconnect();
+      navigateTo('/login');
     }
   });
 
@@ -75,28 +91,72 @@
     scrollBottom();
   });
 
-  const myFriends = async () => {
+  const myChats = async () => {
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
-      console.log(response.data.friends);
-      friends.value = response.data.friends;
+      console.log("all chats:", response.data.chats);
+      allChats.value = response.data.chats;
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
   };
 
-  const selectFriend = (friend: any) => {
-    chat_id.value = friend.friend_id;
-    friendName.value = friend.username;
-    fetchMessages();
-    console.log(chat_id.value);
+  const myGroup = async () => {
+    try {
+      const response = await axios.get('http://localhost/api/show-member-activity', options);
+      console.log("activities:", response.data.activities);
+      console.log("allMembers:", response.data.allMembers);
+      console.log("done");
+      activities.value = response.data.activities;
+      members.value = response.data.allMembers;
+    } catch (error) {
+      console.error('Error cant get group activity:', error);
+    }
+  }
+
+  const selectChat = (chat: any) => {
+    console.log("chat:", chat);
+    chat_id.value = chat.id;
+    chatName.value = chat.name
+    if (chat.friend_id) {
+      selection.value = "friend";
+      console.log("friend");
+      friend_id.value = chat.friend_id
+      fetchPrivateMessages();
+    } else {
+      selection.value = "activity";
+      console.log("activity");
+      fetchGroupMessages();
+    }
+  }
+
+  const storeMessage = async () => {
+    if (selection.value == "friend") {
+      storePrivateMessage();
+      fetchPrivateMessages();
+    } else {
+      storeGroupMessage();
+      fetchGroupMessages();
+    }
   };
 
-  const fetchMessages = async () => {
-    const requestData = JSON.stringify({ friend_id: chat_id.value });
+  const fetchGroupMessages = async () => {
+    const requestData = JSON.stringify({ activity_id: chat_id.value });
+    try {
+      const response = await axios.post('http://localhost/api/fetch-group-messages', requestData, options);
+      console.log("group chats", response.data.chats);
+      chats.value = response.data.chats;
+      scrollBottom();
+    } catch (error) {
+      console.error('Error fetching group messages:', error);
+    }
+  };
+
+  const fetchPrivateMessages = async () => {
+    const requestData = JSON.stringify({ friend_id: friend_id.value });
     try {
       const response = await axios.post('http://localhost/api/fetchMessages', requestData, options);
-      console.log(response.data.chats);
+      console.log("private chats:", response.data.chats);
       chats.value = response.data.chats;
       scrollBottom();
     } catch (error) {
@@ -104,8 +164,19 @@
     }
   };
 
-  const storeMessage = async () => {
-    const requestData = JSON.stringify({ friend_id: chat_id.value, message: newMessage.value });
+  const storeGroupMessage = async () => {
+    const requestData = JSON.stringify({ activity_id: chat_id.value, message: newMessage.value });
+    try {
+      await axios.post('http://localhost/api/group-message-store', requestData, options);
+      newMessage.value = '';
+    } catch (error) {
+      console.error('Error adding group message:', error);
+    }
+  };
+
+  const storePrivateMessage = async () => {
+    const requestData = JSON.stringify({ friend_id: friend_id.value, message: newMessage.value });
+    console.log("requestData:", requestData);
     try {
       await axios.post('http://localhost/api/messageStore', requestData, options);
       newMessage.value = '';
@@ -124,10 +195,20 @@
   const pusher = new Pusher('e63b96afbc7499aee175', {
     cluster: 'ap1'
   });
+  const channel1 = pusher.subscribe('Private');
+  channel1.bind('Message' + auth.user.id, () => {
+    if (selection.value == "friend") {
+      fetchPrivateMessages();
+    }
+    myChats();
+  });
 
-  const channel = pusher.subscribe('Private');
-  channel.bind('Message', () => {
-    fetchMessages();
+  const channel2 = pusher.subscribe('Group');
+  channel2.bind('Message' + auth.user.id, () => {
+    if (selection.value == "activity") {
+      fetchGroupMessages();
+    }
+    myChats();
   });
 </script>
 
@@ -136,6 +217,13 @@
     display: flex;
     min-height: 100%;
     min-width: 100%;
+  }
+
+  .icon {
+    width: 30px; 
+    height: 30px; 
+    margin-right: 10px; 
+    border-radius: 50%; 
   }
 
   .friendsContainer {
@@ -152,14 +240,51 @@
     gap: 10px;
   }
 
-  .friendSelect {
+  /* .friendSelect {
     background-color: #57606e;
     border-radius: 8px;
     padding: 10px;
     color: #fff;
     text-align: center;
     cursor: pointer;
+  } */
+
+  .friendSelect,
+  .activitySelect {
+    display: flex;
+    align-items: center;
+    background-color: #57606e;
+    border-radius: 8px;
+    padding: 5px 10px; 
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px; 
+    margin-bottom: 10px; /* Adjust the margin as needed */
   }
+
+  .activitiesContainer {
+    width: 25%;
+    background-color: #394049;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .activitiesList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* .activitySelect {
+    background-color: #57606e;
+    border-radius: 8px;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+  } */
 
   .chatContainer {
     flex-grow: 1;
@@ -245,4 +370,9 @@
     border-radius: 4px;
     cursor: pointer;
   }
+
+  .hidden {
+    display: none;
+  }
+
 </style>
