@@ -26,6 +26,7 @@
                     <p class="pb-2"> <i class="fa-regular fa-clock"></i> {{ formatTime(activity.activity.start_date) }}
                         - {{ formatTime(activity.activity.end_date) }}</p>
                     <p class="pb-2"> <i class="fa-solid fa-map-pin"></i> {{ activity.activity.location }} </p>
+                    <p class="pb-2"> <i class="fa-solid fa-map-pin"></i> isMember {{ isMember }} </p>
                   
 
                 </div>
@@ -102,7 +103,7 @@ const { data: members } = await useMyFetch<any>(
     {}
 )
 const refreshPage = () => {
-  navigateTo('/');
+    location.reload();
 };
 
 
@@ -139,7 +140,6 @@ console.log("member", activity.value.activity.master_activity_id)
 
 
 const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
-console.log(isMember.value.success);
 const isMemberBoolean = isMember.value.success;
 
 const formatDateTime = (dateTime: string | number | Date) => {
