@@ -112,10 +112,17 @@ console.log(activity.value.activity.master_activity_id, MasterActivityName)
 const users = [];
 for (const member of members._rawValue) {
     console.log("userid", member)
-    const { data: user } = await useMyFetch<any>(`find-user/${member.user_id}`, {});
+    const { data: user } = await useMyFetch<any>(`find-user/${member.id}`, {});
     // Push the user data to the users array
     users.push(user.value);
 }
+
+console.log("Users Array:", users);
+
+// To log individual user data within the array:
+users.forEach((user, index) => {
+  console.log(`User ${index + 1} Data:`, user.id);
+});
 
 // members._rawValue.forEach((member) => {
 //     const { data: user } = await useMyFetch<any>(
