@@ -7,7 +7,6 @@
                     <form @submit.prevent="createActivity()">
                         <div class="grid grid-cols-2 gap-20">
                             <div>
-                                <!-- Name -->
                                 <div class="mb-4">
                                     <label for="name" class="block font-semibold">Name</label>
                                     <input type="text" id="name" v-model="activityData.name"
@@ -15,7 +14,6 @@
                                     <p class="text-red-500">{{ errors.name }}</p>
                                 </div>
 
-                                <!-- Start Date (use a date-time picker library) -->
                                 <div class="mb-4">
                                     <label for="start_date" class="block font-semibold">Activity starts</label>
                                     <input v-if="!activityData.end_date" type="datetime-local" id="start_date"
@@ -27,7 +25,6 @@
                                     <p class="text-red-500">{{ errors.start_date }}</p>
                                 </div>
 
-                                <!-- Maximum -->
                                 <div class="mb-4">
                                     <label for="maximum" class="block font-semibold">Maximum Joinable</label>
                                     <input type="number" id="maximum" v-model="activityData.maximum"
@@ -91,12 +88,9 @@
                                             </label>
                                         </div>
                                     </section>
-
-                                    <!-- <p class="text-red-500">{{ errors.image }}</p> -->
                                 </div>
                             </div>
                             <div>
-                                <!-- Category Dropdown (fetch data from backend) -->
                                 <div class="mb-4">
                                     <label for="category" class="block font-semibold">Types of Activity</label>
                                     <select id="category" v-model="activityData.category"
@@ -190,7 +184,6 @@ const errors = reactive({
     category: "",
     detail: "",
     location: "",
-    // image: "",
 });
 
 const getCurrentDateTime = () => {
@@ -248,57 +241,44 @@ function isSaveValid() {
     } else {
         errors.location = ""
     }
-    // if (!uploadedFile.value) {
-    //     valid = false;
-    //     errors.image = "image is required"
-    // } else {
-    //     errors.image = ""
-    // }
-
     return valid;
 };
 
 async function createActivity() {
     // const modal = document.getElementById("popup-modal");
     if (isSaveValid()) {
-        let dataToSend = new FormData();
+        const dataToSend = {
+            name: activityData.name,
+            maximum: activityData.maximum,
+            start_date: activityData.start_date,
+            end_date: activityData.end_date,
+            master_activity_id: activityData.category,
+            detail: activityData.detail,
+            goal: activityData.goal,
+            location: activityData.location,
+        };
 
-        for (const key in activityData) {
-            dataToSend.append(key, activityData[key]);
+        if (previewUrl.value != `http://localhost/${activity.value.activity.post_image_path}`) {
+            console.log("imagechange")
+            dataToSend.post_image = uploadedFile.value;
         }
-
-        if(previewUrl.value){
-            dataToSend.append("post_image", uploadedFile.value);
-        }
-
-        dataToSend.forEach((value, key) => {
-                console.log(`Field Name: ${key}, Field Value: ${value}`);
-            });
 
         try {
             const { data: response } = await useMyFetch<any>(`editActivity/${activity.value.activity.id}`, {
                 method: "PUT",
-                body: dataToSend,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend),
             });
 
-
-            if (response.status) { //response.value !== null
-                activityData.name = '';
-                activityData.maximum = null;
-                activityData.start_date = '';
-                activityData.end_date = '';
-                activityData.category = '';
-                activityData.detail = '';
-                activityData.goal = '';
-                activityData.location = '';
-
+            if (response.value.status) {
                 errors.name = '';
                 errors.maximum = '';
                 errors.start_date = '';
                 errors.end_date = '';
                 errors.category = '';
                 errors.detail = '';
-                errors.image = '';
 
                 console.log("successs")
             }

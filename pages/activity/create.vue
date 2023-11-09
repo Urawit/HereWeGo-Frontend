@@ -157,6 +157,7 @@
   
 
 <script setup lang="ts">
+import axios from "axios";
 import { reactive, ref } from "vue";
 import useMyFetch from '~/composables/useMyFetch';
 
