@@ -32,63 +32,13 @@
                                     <p class="text-red-500">{{ errors.maximum }}</p>
                                 </div>
 
-                                <div class="container max-h-55 mx-auto items-center py-5">
-                                    <label class="block font-semibold mb-2">Activity Image</label>
-                                    <section v-if="previewUrl" class="mx-auto bg-white rounded-lg shadow-md items-center">
-                                        <!-- Display the selected image -->
-                                        <div class="px-4 py-8">
-                                            <div
-                                                class="max-w-sm mb-3 py-2 bg-gray-100 border-dashed border-2 rounded-lg items-center mx-auto text-center cursor-pointer">
-                                                <div v-if="previewUrl" class="flex items-center justify-center">
-                                                    <img :src="previewUrl" class="max-h-55 px-auto w-60 object-cover" />
-                                                </div>
-                                            </div>
-
-                                            <div class="flex items-center justify-center">
-                                                <div class="w-full flex items-center">
-                                                    <label class="cursor-pointer">
-                                                        <span
-                                                            class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 rounded-full">change</span>
-                                                        <input type="file" class="hidden" accept="image/*"
-                                                            @change="previewImage" />
-                                                    </label>
-                                                    <div v-if="selectedFile" class="ml-3 text-sm text-gray-700">
-                                                        {{ selectedFile.name }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </section>
-
-                                    <section v-else class="mx-auto bg-white rounded-lg shadow-md items-center ">
-                                        <div class="flex items-center justify-center w-full">
-                                            <label for="dropzone-file"
-                                                class="flex flex-col items-center justify-center w-full h-60 border-2 border-gold border-dashed rounded-lg cursor-pointer bg-gray-100 dark:hover:bg-bray-800 hover:bg-gray-100"
-                                                @dragover.prevent="dragOver" @dragleave.prevent="dragLeave"
-                                                @drop.prevent="dropImage" ref="dropzone">
-                                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                                    <svg class="w-12 h-12 mb-4 text-gray-500" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                                        <path stroke="currentColor" stroke-linecap="round"
-                                                            stroke-linejoin="round" stroke-width="2"
-                                                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                                    </svg>
-                                                    <p class="mb-2 text-sm text-gray-500">
-                                                        <span class="font-semibold">Click to upload</span> or drag and drop
-                                                    </p>
-                                                    <p class="text-xs text-gray-500">JPEG, PNG, JPG or GIF</p>
-                                                </div>
-                                                <label class="mb-4 cursor-pointer">
-                                                    <span
-                                                        class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 rounded-full">choose
-                                                        image</span>
-                                                    <input type="file" id="dropzone-file" class="hidden" accept="image/*"
-                                                        @change="previewImage" />
-                                                </label>
-                                            </label>
-                                        </div>
-                                    </section>
+                                <!-- Optional: Goal -->
+                                <div class="mb-4">
+                                    <label for="goal" class="block font-semibold">Goal</label>
+                                    <textarea id="goal" v-model="activityData.goal"
+                                        class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80"></textarea>
                                 </div>
+
                             </div>
                             <div>
                                 <div class="mb-4">
@@ -128,12 +78,6 @@
                                         class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80"></textarea>
                                 </div>
 
-                                <!-- Optional: Goal -->
-                                <div class="mb-4">
-                                    <label for="goal" class="block font-semibold">Goal</label>
-                                    <textarea id="goal" v-model="activityData.goal"
-                                        class="rounded-lg border-gray-300 bg-gray-50 mt-2 w-80"></textarea>
-                                </div>
                             </div>
                         </div>
                         <div class="text-center">
@@ -210,11 +154,11 @@ console.log(activity.value.activity)
 const { data: response } = await useMyFetch<any>("allActivities", {})
 const categories = response.value;
 
-const previewUrl = ref(`http://localhost/${activity.value.activity.post_image_path}`);
-const selectedFile = ref(null);
-const dropzone = ref(null);
-const uploadedFile = ref(null);
-const imageFileType = ref(null);
+// const previewUrl = ref(`http://localhost/${activity.value.activity.post_image_path}`);
+// const selectedFile = ref(null);
+// const dropzone = ref(null);
+// const uploadedFile = ref(null);
+// const imageFileType = ref(null);
 
 const activityData = reactive({
     name: activity.value.activity.name || "",
@@ -317,10 +261,10 @@ async function editActivity() {
             location: activityData.location,
         };
 
-        if (previewUrl.value != `http://localhost/${activity.value.activity.post_image_path}`) {
-            console.log("imagechange")
-            dataToSend.post_image = uploadedFile.value;
-        }
+        // if (previewUrl.value != `http://localhost/${activity.value.activity.post_image_path}`) {
+        //     console.log("imagechange")
+        //     dataToSend.post_image = uploadedFile.value;
+        // }
 
         try {
             const { data: response } = await useMyFetch<any>(`editActivity/${activity.value.activity.id}`, {
@@ -353,55 +297,55 @@ async function editActivity() {
 };
 
 
-const previewImage = (event) => {
-    const file = event.target.files ? event.target.files[0] : null; // ตรวจสอบว่ามี files หรือไม่
-    if (file) {
-        const reader = new FileReader();
+// const previewImage = (event) => {
+//     const file = event.target.files ? event.target.files[0] : null; // ตรวจสอบว่ามี files หรือไม่
+//     if (file) {
+//         const reader = new FileReader();
 
-        reader.onload = () => {
-            previewUrl.value = reader.result;
-            selectedFile.value = file; // Store the selected file
-        };
+//         reader.onload = () => {
+//             previewUrl.value = reader.result;
+//             selectedFile.value = file; // Store the selected file
+//         };
 
-        reader.readAsDataURL(file);
-    }
+//         reader.readAsDataURL(file);
+//     }
 
-    uploadedFile.value = file;
-    imageFileType.value = file.name.split('.').pop();
-};
+//     uploadedFile.value = file;
+//     imageFileType.value = file.name.split('.').pop();
+// };
 
-const dragOver = (event) => {
-    event.preventDefault();
-    dropzone.value.classList.add("border-blue-500");
-};
+// const dragOver = (event) => {
+//     event.preventDefault();
+//     dropzone.value.classList.add("border-blue-500");
+// };
 
-const dragLeave = () => {
-    dropzone.value.classList.remove("border-blue-500");
-};
+// const dragLeave = () => {
+//     dropzone.value.classList.remove("border-blue-500");
+// };
 
-const dropImage = (event) => {
-    event.preventDefault();
-    dropzone.value.classList.remove("border-blue-500");
+// const dropImage = (event) => {
+//     event.preventDefault();
+//     dropzone.value.classList.remove("border-blue-500");
 
-    const file = event.dataTransfer.files[0];
-    previewUrl.value = null; // Clear the old image
-    selectedFile.value = null; // Clear the selected file
-    if (file) {
-        previewFile(file);
-    }
-};
+//     const file = event.dataTransfer.files[0];
+//     previewUrl.value = null; // Clear the old image
+//     selectedFile.value = null; // Clear the selected file
+//     if (file) {
+//         previewFile(file);
+//     }
+// };
 
-const previewFile = (file) => {
-    if (file) {
-        const reader = new FileReader();
+// const previewFile = (file) => {
+//     if (file) {
+//         const reader = new FileReader();
 
-        reader.onload = () => {
-            previewUrl.value = reader.result;
-            selectedFile.value = file; // Store the selected file
-        };
+//         reader.onload = () => {
+//             previewUrl.value = reader.result;
+//             selectedFile.value = file; // Store the selected file
+//         };
 
-        reader.readAsDataURL(file);
-    }
-};
+//         reader.readAsDataURL(file);
+//     }
+// };
 
 </script>
