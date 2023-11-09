@@ -166,7 +166,7 @@
   const isDropdownNotification = ref(false); 
   const isDropdownUser = ref(false); 
   const isDropdownChat = ref(false); 
-  const notifications = ref([])
+  const notifications = ref([]);
   const friends = ref([]);
   const users = ref([]);
   const notifications_counter = ref(0)
