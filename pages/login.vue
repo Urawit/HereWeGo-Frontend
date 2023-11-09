@@ -41,6 +41,13 @@
   
 <script setup lang="ts">
 import { useAuthStore } from "~/stores/useAuthStore";
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  if (auth.isLogin) {
+    navigateTo('/');
+  }
+});
 
 const auth = useAuthStore()
 const errorMessage = ref<string | undefined>("")

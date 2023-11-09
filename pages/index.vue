@@ -39,7 +39,7 @@
 <script setup lang="ts">
   import axios from 'axios';
   import { useAuthStore } from "~/stores/useAuthStore";
-  import { ref, onMounted, onUpdated } from 'vue';
+  import { ref, onMounted } from 'vue';
 
   const activities = ref([]);
   const auth = useAuthStore();
@@ -61,7 +61,7 @@
 
   const getAllActivities = async () => {
     try {
-      const response = await axios.get('http://localhost/api/getAllActivities', options);
+      const response = await axios.get('http://localhost/api/getActiveActivities', options);
       console.log("activities:", response.data.activities);
       activities.value = response.data.activities;
     } catch (error) {
