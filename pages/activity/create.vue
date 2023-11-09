@@ -157,6 +157,7 @@
   
 
 <script setup lang="ts">
+import axios from "axios";
 import { reactive, ref } from "vue";
 import useMyFetch from '~/composables/useMyFetch';
 
@@ -297,7 +298,8 @@ async function createActivity() {
             if (response.ok) {
                 const responseData = await response.json();
 
-                if (responseData) {
+                if (responseData)  {
+
                     // Clear form fields and error messages
                     activityData.name = '';
                     activityData.maximum = null;

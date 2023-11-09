@@ -3,7 +3,8 @@
         class="border-2 mx-auto my-12 w-4/6 h-40 border-black">
         <div class="grid grid-cols-4 gap-1">
             <div class="my-5">
-                <img src="https://i.imgur.com/SADzkAv.jpg" class="mx-5 w-28 h-28">
+                <img v-if="activity.post_image_path" :src="`http://localhost/${activity.post_image_path}`" 
+                    class="mx-5 w-28 h-28">
             </div>
             <div id="NameActivity" class="">
                 <div class="my-5">
@@ -13,19 +14,23 @@
                     <div class="my-5 text-black">
                         {{ activity.location }}
                     </div>
-                    <div class="my-5 text-black">
-                        Sport
-                    </div>
                 </div>
             </div>
-            <div id="NameActivity" class="">
+            <div id="dateActivity" class="">
                 <div class="my-5">
-                    <div class="text-black ">
-                        {{ activity.start_date }}
-                    </div>
+                  
+                  {{
+                    new Date(activity.start_date).getDate().toString().padStart(2, '0') + ' ' +
+                    new Date(activity.start_date).toLocaleString('en-US', { month: 'short' }) + ' ' +
+                    new Date(activity.start_date).toLocaleString('en-US', {
+                      hour: '2-digit', minute:
+                        '2-digit', hour12: true
+                    })
+                  }}
+              
                 </div>
             </div>
-            <div id="NameActivity" class="">
+            <div id="button" class="">
                 <div class="my-4">
                     <div class="">
                         <button
