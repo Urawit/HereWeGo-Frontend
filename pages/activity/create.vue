@@ -377,13 +377,13 @@ async function createActivity() {
                 },
             });
 
-            console.log(response.data);
+            console.log("response: ", response.data.success);
 
-            if (response.ok) {
-                const responseData = await response.json();
-                createdActivity.value = responseData.activity.id;
+            if (response.data.success) {
+                // const responseData = await response.json();
+                createdActivity.value = response.data.activity.id;
 
-                if (responseData) {
+                // if (responseData) {
 
                     // Clear form fields and error messages
                     activityData.name = '';
@@ -406,9 +406,9 @@ async function createActivity() {
                     modal.classList.remove("hidden");
 
                     console.log("Activity created successfully");
-                } else {
-                    console.log("Failed to create the activity");
-                }
+                // } else {
+                //     console.log("Failed to create the activity");
+                // }
             } else {
                 console.log("HTTP request failed");
             }
