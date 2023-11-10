@@ -62,14 +62,14 @@
 
   const chats = ref([]);
   const allChats = ref([]);
-  const activities = ref([]);
-  const members = ref([]);
   const selection = ref('');
   const chat_id = ref('');
   const friend_id = ref(''); 
   const chatName = ref(''); 
-  const auth = useAuthStore();
   const newMessage = ref(''); 
+  const auth = useAuthStore();
+  const route = useRoute();
+  const params = route.params.id
   const hasScrolledToBottom = ref(null);
   const options = {
     headers: {
@@ -82,7 +82,7 @@
   onMounted(() => {
     if (auth.isLogin) {
       myChats();
-      myGroup();
+      getChat();
     } else {
       pusher.disconnect();
       navigateTo('/login');
@@ -93,6 +93,23 @@
     scrollBottom();
   });
 
+  const getChat = () => {
+    const paramValue = Array.isArray(params) ? params[0] : params;
+    const match = paramValue.match(/\d+/);
+    const id = match ? match[0] : null;
+    console.log("ID:", id);
+    
+    if (params.includes('friend')) {
+      selection.value = "friend";
+      friend_id.value = id!;
+      fetchPrivateMessages();
+    } else if (params.includes('activity')) {
+      selection.value = "activity";
+      chat_id.value = id!;
+      fetchGroupMessages();
+    }
+  }
+
   const myChats = async () => {
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
@@ -102,18 +119,6 @@
       console.error('Error fetching messages:', error);
     }
   };
-
-  const myGroup = async () => {
-    try {
-      const response = await axios.get('http://localhost/api/show-member-activity', options);
-      console.log("activities:", response.data.activities);
-      console.log("allMembers:", response.data.allMembers);
-      activities.value = response.data.activities;
-      members.value = response.data.allMembers;
-    } catch (error) {
-      console.error('Error cant get group activity:', error);
-    }
-  }
 
   const selectChat = (chat: any) => {
     console.log("chat:", chat);

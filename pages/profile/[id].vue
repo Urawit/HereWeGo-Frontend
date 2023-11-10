@@ -17,7 +17,7 @@
           <span class="cursor-pointer rounded-full bg-gray-300 px-4 py-2 text-sm mr-4 hover:bg-gray-500" 
           :class="{ hidden : status != 'F'}" @click="deleteFriend()">UnFriend</span>
           <span class="cursor-pointer rounded-full bg-gray-300 px-4 py-2 text-sm mr-4 hover:bg-gray-500" 
-          :class="{ hidden : status != 'F'}" @click="navigateTo({ name: '/message', params: { id: frined_id }});">Message</span>
+          :class="{ hidden : status != 'F'}" @click="navigateTo('/message/friend' + frined_id);">Message</span>
 
           <span class="cursor-pointer rounded-full bg-gray-300 px-4 py-2 text-sm mr-4 hover:bg-gray-500" 
           :class="{ hidden : status != 'FW'}" @click="deleteFriend()">Eject Request</span>
