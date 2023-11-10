@@ -84,13 +84,16 @@
                     <div class="pt-2"></div>
 
                     <div class="mt-6 text-xl text-gray-500">
-                        <template v-if="!activity.activity.comments || activity.activity.comments.length === 0">
+                        <!-- <template v-if="!activity.activity.comments || activity.activity.comments.length === 0"> -->
+                        <template v-if="true">
                             Be the first to leave a comment !
                         </template>
                         <template v-else>
                             <div v-for="comment in activity.activity.comments" :key="comment.id" class="flex items-center px-10 mt-1">
                                 <div class="flex items-center relative w-full" style="margin-right: 20px;">
-                                    <img :src="`http://localhost/${comment.user.image_path}`" class="profile-picture">
+                                  <img v-if="comment.user.image_path" class="profile-picture"
+                                    :src="`http://localhost/${comment.user.image_path}`">
+                                  <img v-else src="@/assets/images/user-default.jpg" class="profile-picture">
                                     <div class="ml-5 px-2 py-3">
                                         <div class="text-[20px] font-semibold flex" style="margin-right: 0px;">
                                             <!-- Display the user's name here -->
@@ -150,31 +153,33 @@
   
 
 <script setup lang="ts" >
+  import axios from 'axios';
+  import { ref, onMounted } from 'vue';
+  import { useAuthStore } from "~/stores/useAuthStore";
+  import swal from 'sweetalert';
 
-import axios from 'axios';
-import { ref } from 'vue';
-import { useAuthStore } from "~/stores/useAuthStore";
-import swal from 'sweetalert';
-const route = useRoute()
-const newComment = ref('');
-const auth = useAuthStore();
-const showEditPopup = ref(false);
-const editedComment = ref('');
-const options = {
-  headers: {
-    'Content-Type': 'application/json',
-    "Accept": "application/json",
-    "Authorization": `Bearer ${auth.token}`, 
+  const route = useRoute()
+  const newComment = ref('');
+  const auth = useAuthStore();
+  const showEditPopup = ref(false);
+  const editedComment = ref('');
+  const options = {
+    headers: {
+      'Content-Type': 'application/json',
+      "Accept": "application/json",
+      "Authorization": `Bearer ${auth.token}`, 
+    }
   }
-}
-const { data: activity, pending } = await useMyFetch<any>(`getActivity/${route.params.id}`,{})
-const { data: members } = await useMyFetch<any>(`get-all-member/${route.params.id}`,{})
-const { data: MasterActivityName } = await useMyFetch<any>(`get-master-activity-name/${activity.value.activity.master_activity_id}`,{})
+  const { data: activity, pending } = await useMyFetch<any>(`getActivity/${route.params.id}`,{})
+  const { data: members } = await useMyFetch<any>(`get-all-member/${route.params.id}`,{})
+  const { data: MasterActivityName } = await useMyFetch<any>(`get-master-activity-name/${activity.value.activity.master_activity_id}`,{})
+  const users: any[] = [];
+  const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
+  const isMemberBoolean = isMember.value.success;
 
+  onMounted(() => {
 
-const users = [];
-const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
-const isMemberBoolean = isMember.value.success;
+  });
 
 
 const formatDateTime = (dateTime: string | number | Date) => {
@@ -189,13 +194,15 @@ const formatTime = (dateTime: string | number | Date) => {
 
 for (const member of members._rawValue) {
     console.log("userid", member)
-    const { data: user } = await useMyFetch<any>(`find-user/${member.id}`, {});
-    users.push(user.value);
+    const requestData = JSON.stringify({ user_id: member.id });
+    const response = await axios.post('http://localhost/api/findUserByID', requestData, options);
+    console.log("Find User:", response.data);
+    users.push(response.data.user);
+
 }
 users.forEach((user, index) => {
     console.log(`User ${index + 1} Data:`, user.id);
 });
-
 
 const refreshPage = () => {
     setTimeout(() => {

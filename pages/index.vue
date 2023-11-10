@@ -39,7 +39,7 @@
       <div class="grid grid-cols-4 gap-10">
         <div v-for="activity in activities" :key="activity.id"
           class="rounded-lg overflow-hidden bg-white shadow-md border-2 hover:border-blue-500 border-gray-300 transition-transform transform hover:scale-105">
-          <div @click="handleImageClick(activity.id)">
+          <div>
             <nuxt-link :to="`/activity/${activity.id}`">
               <div>
                 <img v-if="activity.post_image_path" :src="`http://localhost/${activity.post_image_path}`"

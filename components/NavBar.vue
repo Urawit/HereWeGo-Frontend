@@ -87,7 +87,7 @@
                     :value="user.id"
                     @click="toggleDropdownAllOff()"
                   >
-                    <nuxt-link  :to="`/user/${user.id}`">
+                    <nuxt-link  :to="`/profile/${user.id}`">
                       <p class="frontheader">
                         {{user.username}}
                       </p>

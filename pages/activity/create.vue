@@ -214,7 +214,7 @@ import axios from "axios";
 import { reactive, ref } from "vue";
 import { useAuthStore } from "~/stores/useAuthStore";
 import useMyFetch from '~/composables/useMyFetch';
-// import BoxIcon from 'box-icon';
+// const auth = useAuthStore();
 const auth = useAuthStore();
 const options = {
     headers: {
