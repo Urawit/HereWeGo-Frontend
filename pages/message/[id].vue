@@ -27,7 +27,7 @@
 
     <div class="chatContainer bg-gray-100 text-black min-h-screen">
       <button @click="">
-        <p class="chatTitle">{{ selection === 'friend' ? chatName : 'Group Activity' }}</p>
+        <p class="chatTitle">{{ chatName ? chatName : 'Chat' }}</p>
       </button>
       <div ref="hasScrolledToBottom" class="chatMessages">
         <div
@@ -36,6 +36,7 @@
           class="message"
           :class="{ 'my-message': chat.user_id === auth.user.id }"
         >
+          <p>{{ datetime(chat.created_at) }}</p>
           <p class="message-user" :class="{ 'hidden': selection == 'friend' }">{{ chat.user_id === auth.user.id ? auth.user.username : chat.username }}</p>
           <p class="message-user" :class="{ 'hidden': selection == 'activity' }">{{ chat.user_id === auth.user.id ? auth.user.username : chatName }}</p>
           <p class="message-content">{{ chat.message }}</p>
@@ -94,17 +95,23 @@
     scrollBottom();
   });
 
+  const datetime = (created_at: any) => {
+    const date = new Date(created_at);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${day}/${month} ${hours}:${minutes}`;
+  }
 
-  const getChat = () => {
+  const getChat = async() => {
     const paramValue = Array.isArray(params) ? params[0] : params;
     const match = paramValue.match(/\d+/);
     const id = match ? match[0] : null;
-    console.log("ID:", id);
-    
+
     if (params.includes('friend')) {
       selection.value = "friend";
       friend_id.value = id!;
-  
       fetchPrivateMessages();
     } else if (params.includes('activity')) {
       selection.value = "activity";
@@ -118,9 +125,6 @@
       const response = await axios.get('http://localhost/api/myFriends', options);
       console.log("all chats:", response.data.chats);
       allChats.value = response.data.chats;
-      if (response.data.chats.length > 0) {
-        selectChat(response.data.chats[0]); // Select the first chat automatically
-      }
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -132,13 +136,12 @@
     chatName.value = chat.name;
     if (chat.friend_id) {
       selection.value = "friend";
-      console.log("friend");
+      console.log("friend", chat);
       friend_id.value = chat.friend_id
       fetchPrivateMessages();
     } else {
       selection.value = "activity";
-      console.log("activity");
-      chatName.value = 'Group Activity';
+      console.log("activity", chat);
       fetchGroupMessages();
     }
   }
@@ -333,7 +336,7 @@
   }
 
   .message {
-    background-color: white;
+    background-color: black;
     border-radius: 8px;
     padding: 10px;
     color: #fff;
