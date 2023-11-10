@@ -19,7 +19,7 @@
           />
           <div>
             <p>{{ chat.name }}</p>
-            <p>{{ chat.message }} {{ datetime(chat.created_at) }}</p>
+            <!-- <p>{{ chat.message }} {{ datetime(chat.created_at) }}</p> -->
           </div>
         </button>
       </div>
@@ -86,7 +86,6 @@
       myChats();
       getChat();
     } else {
-      pusher.disconnect();
       navigateTo('/login');
     }
   });
@@ -214,7 +213,7 @@
     }
   };
 
-  const pusher = new Pusher('301d0ac46c750e11bff0', {
+  const pusher = new Pusher('ff912493cd813e50a2e3', {
     cluster: 'ap1'
   });
   const channel1 = pusher.subscribe('Private');

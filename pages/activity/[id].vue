@@ -53,12 +53,12 @@
                         </div>
                 </div>
 
-                <form @submit.prevent="onSubmit(activity.activity.id)">
+                <!-- <form @submit.prevent="onSubmit(activity.activity.id)">
                     <button v-if="!isMemberBoolean" type="submit" id="submit" @click="refreshPage" class="button-9">
                         Join
                     </button>
 
-                </form>
+                </form> -->
 
             </aside>
 

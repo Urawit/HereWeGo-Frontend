@@ -98,6 +98,20 @@ bun run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
+# Postman Testing
+checking status 200
+```
+pm.test("Status code is 200", function (){
+    pm.response.to.have.status(200);
+});
+
+pm.test("response should be okay to process", function () {
+    pm.response.to.not.be.error;
+    pm.response.to.not.have.jsonBody("error");
+});
+```
+![Postman testing](postman.png)
+
 # UI Flow
 ![UI flow](image.png)
 

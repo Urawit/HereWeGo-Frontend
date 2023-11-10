@@ -254,7 +254,7 @@
     }
   }
 
-  const pusher = new Pusher('301d0ac46c750e11bff0', {
+  const pusher = new Pusher('ff912493cd813e50a2e3', {
     cluster: 'ap1'
   });
 
