@@ -38,37 +38,39 @@
   </div>
   <div v-if="status === 'F'">
     <div v-for="activity in joinedActivities" :key="activity.activity_id"
-        class="border-2 mx-auto my-12 w-4/6 h-40 border-black">
+      class="border-2 mx-auto my-12 w-4/6 h-40 border-black">
+      <nuxt-link :to="`/activity/${activity.activity_id}`">
         <div class="grid grid-cols-4 gap-1">
+          <div class="my-5">
+            <img v-if="activity.post_image_path" :src="`http://localhost/${activity.post_image_path}`"
+              class="mx-5 w-28 h-28">
+          </div>
+          <div id="NameActivity" class="">
             <div class="my-5">
-                <img v-if="activity.post_image_path" :src="`http://localhost/${activity.post_image_path}`"
-                    class="mx-5 w-28 h-28">
+              <div class="text-black">
+                {{ activity.name }}
+              </div>
+              <div class="my-5 text-black">
+                {{ activity.location }}
+              </div>
             </div>
-            <div id="NameActivity" class="">
-                <div class="my-5">
-                    <div class="text-black">
-                        {{ activity.name }}
-                    </div>
-                    <div class="my-5 text-black">
-                        {{ activity.location }}
-                    </div>
-                </div>
-            </div>
-            <div id="dateActivity" class="">
-                <div class="my-5">
+          </div>
+          <div id="dateActivity" class="">
+            <div class="my-5">
 
-                    {{
-                        new Date(activity.start_date).getDate().toString().padStart(2, '0') + ' ' +
-                        new Date(activity.start_date).toLocaleString('en-US', { month: 'short' }) + ' ' +
-                        new Date(activity.start_date).toLocaleString('en-US', {
-                            hour: '2-digit', minute:
-                                '2-digit', hour12: true
-                        })
-                    }}
+              {{
+                new Date(activity.start_date).getDate().toString().padStart(2, '0') + ' ' +
+                new Date(activity.start_date).toLocaleString('en-US', { month: 'short' }) + ' ' +
+                new Date(activity.start_date).toLocaleString('en-US', {
+                  hour: '2-digit', minute:
+                    '2-digit', hour12: true
+                })
+              }}
 
-                </div>
             </div>
+          </div>
         </div>
+      </nuxt-link>
     </div>
   </div>
 </template>
@@ -118,7 +120,7 @@ const getUser = async () => {
     console.log("Find User:", response.data);
     user.value = response.data.user;
     user_id.value = response.data.user.id;
-    console.log("user_id1",user_id.value)
+    console.log("user_id1", user_id.value)
   } catch (error) {
     console.error('Error checking friend status:', error);
   }
