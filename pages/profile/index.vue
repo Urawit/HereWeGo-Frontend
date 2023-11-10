@@ -3,7 +3,7 @@
     </div>
     <div class="bg-white relative shadow rounded-lg w-5/6 mx-auto">
         <div class="flex justify-left">
-            <img v-if="!auth.user.image_path" src="@/assets/images/user-default.jpg" />
+            <img v-if="!auth.user.image_path" src="@/assets/images/user-default.jpg" class="rounded-full mx-auto absolute -top-16 w-40 h-40 shadow-md border-4 border-white transition duration-200 transform hover:scale-110" />
             <img v-else :src="`http://localhost/${auth.user.image_path}`"
                 class="rounded-full mx-auto absolute -top-16 w-40 h-40 shadow-md border-4 border-white transition duration-200 transform hover:scale-110" />
         </div>

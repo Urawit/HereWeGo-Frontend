@@ -210,13 +210,23 @@
   
 
 <script setup lang="ts">
+import axios from "axios";
 import { reactive, ref } from "vue";
 import { useAuthStore } from "~/stores/useAuthStore";
 import useMyFetch from '~/composables/useMyFetch';
-import BoxIcon from 'box-icon';
+// const auth = useAuthStore();
+const auth = useAuthStore();
+const options = {
+    headers: {
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": `Bearer ${auth.token}`,
+    }
+}
 
-const { data: response } = await useMyFetch<any>("allActivities", {})
-const categories = response.value;
+const response = await axios.get('http://localhost/api/allActivities', options);
+const categories = response.data;
+console.log("categories: ", categories)
 
 const authStore = useAuthStore();
 const user_id = computed(() => authStore.user.id);
@@ -354,16 +364,26 @@ async function createActivity() {
         formData.append('image', uploadedFile.value);
 
         try {
-            const response = await fetch('http://localhost/api/createActivity', {
-                method: "POST",
-                body: formData,  // Send the form data
+            // const response = await fetch('http://localhost/api/createActivity', {
+            //     method: "POST",
+            //     body: formData,  // Send the form data
+            // });
+
+            const response = await axios.post('http://localhost/api/createActivity', formData, {
+                maxContentLength: 1024 * 1024, // Max content length (1 MB)
+                maxBodyLength: 1024 * 1024, // Max body length (1 MB)
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Ensure correct content type for form data
+                },
             });
 
-            if (response.ok) {
-                const responseData = await response.json();
-                createdActivity.value = responseData.activity.id;
+            console.log("response: ", response.data.success);
 
-                if (responseData) {
+            if (response.data.success) {
+                // const responseData = await response.json();
+                createdActivity.value = response.data.activity.id;
+
+                // if (responseData) {
 
                     // Clear form fields and error messages
                     activityData.name = '';
@@ -386,9 +406,9 @@ async function createActivity() {
                     modal.classList.remove("hidden");
 
                     console.log("Activity created successfully");
-                } else {
-                    console.log("Failed to create the activity");
-                }
+                // } else {
+                //     console.log("Failed to create the activity");
+                // }
             } else {
                 console.log("HTTP request failed");
             }
@@ -455,4 +475,3 @@ const previewFile = (file) => {
     }
 };
 </script>
-  

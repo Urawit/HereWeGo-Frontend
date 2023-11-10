@@ -32,7 +32,7 @@
                     <div class="grid grid-cols-3 gap-3">
 
                         <div v-for="user of users" :key="user.id" class="mb-4">
-                            <nuxt-link :to="`/user/${user.id}`">
+                            <nuxt-link :to="`/profile/${user.id}`">
                                 <img v-if="user.image_path" class="profile-picture"
                                     :src="`http://localhost/${user.image_path}`">
                                 <img v-else src="@/assets/images/user-default.jpg" class="profile-picture">
@@ -53,6 +53,12 @@
                         </div>
                 </div>
 
+                <form @submit.prevent="onSubmit(activity.activity.id)">
+                    <button v-if="!isMemberBoolean" type="submit" id="submit" @click="refreshPage" class="button-9">
+                        Join
+                    </button>
+
+                </form>
 
             </aside>
 
@@ -67,7 +73,7 @@
                     <div class=" flex flex-col justify-start p-6">
                         <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
                             MasterActivityName }} </a>
-                        <a class="text-3xl font-bold  pb-4"> {{ activity.activity.detail }}</a>
+                        <a class="text-3xl font-bold  pb-4"> {{ activity.activity.detail}}</a>
                         <a class="text-2xl  pb-4">GOAL : {{ activity.activity.goal }}</a>
                     </div>
 
@@ -91,13 +97,16 @@
                     </div>
 
                     <div class="mt-6 text-xl text-gray-500">
-                        <template v-if="!activity.activity.comments || activity.activity.comments.length === 0">
+                        <template v-if="!activity.activity.comments|| activity.activity.comments.length === 0">
                             Be the first to leave a comment !
                         </template>
                         <template v-else>
+                        
                             <div v-for="comment in activity.activity.comments" :key="comment.id" class="flex items-center px-10 mt-1">
                                 <div class="flex items-center relative w-full" style="margin-right: 20px;">
-                                    <img :src="`http://localhost/${comment.user.image_path}`" class="profile-picture">
+                                  <img v-if="comment.user.image_path" class="profile-picture"
+                                    :src="`http://localhost/${comment.user.image_path}`">
+                                  <img v-else src="@/assets/images/user-default.jpg" class="profile-picture">
                                     <div class="ml-5 px-2 py-3">
                                         <div class="text-[20px] font-semibold flex" style="margin-right: 0px;">
                                             <!-- Display the user's name here -->
@@ -148,31 +157,35 @@
   
 
 <script setup lang="ts" >
+  import axios from 'axios';
+  import { ref, onMounted } from 'vue';
+  import { useAuthStore } from "~/stores/useAuthStore";
+  import swal from 'sweetalert';
 
-import axios from 'axios';
-import { ref } from 'vue';
-import { useAuthStore } from "~/stores/useAuthStore";
-import swal from 'sweetalert';
-const route = useRoute()
-const newComment = ref('');
-const auth = useAuthStore();
-const showEditPopup = ref(false);
-const editedComment = ref('');
-const options = {
-  headers: {
-    'Content-Type': 'application/json',
-    "Accept": "application/json",
-    "Authorization": `Bearer ${auth.token}`, 
+  const route = useRoute()
+  const newComment = ref('');
+  const auth = useAuthStore();
+  const showEditPopup = ref(false);
+  const editedComment = ref('');
+  const options = {
+    headers: {
+      'Content-Type': 'application/json',
+      "Accept": "application/json",
+      "Authorization": `Bearer ${auth.token}`, 
+    }
   }
-}
-const { data: activity, pending } = await useMyFetch<any>(`getActivity/${route.params.id}`,{})
-const { data: members } = await useMyFetch<any>(`get-all-member/${route.params.id}`,{})
-const { data: MasterActivityName } = await useMyFetch<any>(`get-master-activity-name/${activity.value.activity.master_activity_id}`,{})
+  const { data: activity, pending } = await useMyFetch<any>(`getActivity/${route.params.id}`,{})
+  const { data: members } = await useMyFetch<any>(`get-all-member/${route.params.id}`,{})
+  const { data: MasterActivityName } = await useMyFetch<any>(`get-master-activity-name/${activity.value.activity.master_activity_id}`,{})
+  const users: any[] = [];
+  const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
+  const isMemberBoolean = isMember.value.success;
 
+  console.log("activity",activity.value.activity.comments);
 
-const users = [];
-const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
-const isMemberBoolean = isMember.value.success;
+  onMounted(() => {
+
+  });
 
 
 const formatDateTime = (dateTime: string | number | Date) => {
@@ -187,13 +200,15 @@ const formatTime = (dateTime: string | number | Date) => {
 
 for (const member of members._rawValue) {
     console.log("userid", member)
-    const { data: user } = await useMyFetch<any>(`find-user/${member.id}`, {});
-    users.push(user.value);
+    const requestData = JSON.stringify({ user_id: member.id });
+    const response = await axios.post('http://localhost/api/findUserByID', requestData, options);
+    console.log("Find User:", response.data);
+    users.push(response.data.user);
+
 }
 users.forEach((user, index) => {
     console.log(`User ${index + 1} Data:`, user.id);
 });
-
 
 const refreshPage = () => {
     setTimeout(() => {
@@ -221,7 +236,7 @@ users.forEach((user, index) => {
         } else {
             console.log("not-member");
             swal({
-                title: "Welcome!",
+                title: "SUCCESS!",
                 text: "success joined",
                 icon: "success"
             });
