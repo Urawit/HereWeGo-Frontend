@@ -18,8 +18,8 @@
             alt="Friend Image"
           />
           <div>
-            <span>{{ chat.name }}</span>
-            <span>{{ chat.message }}</span>
+            <p>{{ chat.name }}</p>
+            <p>{{ chat.message }} {{ datetime(chat.created_at) }}</p>
           </div>
         </button>
       </div>
