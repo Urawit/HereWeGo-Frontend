@@ -32,7 +32,7 @@
                     <div class="grid grid-cols-3 gap-3">
 
                         <div v-for="user of users" :key="user.id" class="mb-4">
-                            <nuxt-link :to="`/user/${user.id}`">
+                            <nuxt-link :to="`/profile/${user.id}`">
                                 <img v-if="user.image_path" class="profile-picture"
                                     :src="`http://localhost/${user.image_path}`">
                                 <img v-else src="@/assets/images/user-default.jpg" class="profile-picture">
@@ -40,7 +40,7 @@
                         </div>
 
                         <div class="flex items-center justify-center">
-                            <nuxt-link :to="`/message`">
+                            <nuxt-link :to="`/message/${activity.activity.id}`">
                                 <button class="button-9">
                                     Chats
                                 </button>
@@ -230,7 +230,7 @@ users.forEach((user, index) => {
         } else {
             console.log("not-member");
             swal({
-                title: "Welcome!",
+                title: "SUCCESS!",
                 text: "success joined",
                 icon: "success"
             });
