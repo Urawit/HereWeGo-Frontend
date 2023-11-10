@@ -77,7 +77,7 @@
             <div class="chat-alert" :class="{ open: chats_counter }"/>
             <div class="dropdown-chat my-8 p-4" :class="{ open: isDropdownChat }">
               <span class="text-black text-2xl font-bold">Messages</span>
-              <ul >
+              <ul class="divide-y-2">
                   <li
                     v-for="chat in chats"
                     :key="chat.id"
@@ -94,7 +94,6 @@
                       <p class="frontdatetime">
                         {{datetime(chat.created_at)}}
                       </p>
-                      <div class="underline"/>
                     </MenuLink>
                   </li>
               </ul>
@@ -114,6 +113,9 @@
             </button>
             <div class="dropdown-user my-8 p-4" :class="{ open: isDropdownUser }">
               <span class="text-black text-2xl font-bold">Friends</span>
+              <input type="text" v-model="searchTerm" @input="search" placeholder="Search User"
+                class="block py-2 pr-2 pl-4 text-m text-gray-900 rounded-lg w-64 p-2 my-2 h-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                style="padding-top: 0px; padding-bottom: 2px; padding-left: 6px; padding-right: 20px;" />
               <ul class="divide-y-2">
                   <li
                     v-for="user in users"
@@ -163,7 +165,6 @@
                       <p class="frontdatetime">
                         {{datetime(notification.created_at)}}
                       </p>
-                      <div class="underline"/>
                     </MenuLink>
                   </li>
               </ul>

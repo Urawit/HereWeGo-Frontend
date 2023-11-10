@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-50 min-h-screen">
+  <div class="bg-gray-0 min-h-screen">
 
     <div class="flex items-center justify-center w-full md:w-auto "
       style="padding-top: 75px; padding-bottom: 0px; padding-left: 20px; padding-right: 20px;">
@@ -93,10 +93,10 @@
                 <button @click="isliked(activity) ? unlikePost(activity.id) : likePost(activity.id)"
                   class="rounded-full bg-gray-100 cursor-pointer transition duration-500 ease-in-out hover:scale-110 hover:ring-2 hover:ring-[#F02C56] hover:ring-offset-base-100 hover:ring-offset-2 peer-focus:scale-110" :title="isliked(activity) ? 'Unlike' : 'Like'">
                   <Icon name="bx:bxs-heart" size="40" :color="isliked(activity) ? '#F02C56' : ''"
-                    style="padding-top: 0px; padding-bottom: 2px; padding-left: 6px; padding-right: 6px;" />
+                    style="padding-top: 6px; padding-bottom: 6px; padding-left: 6px; padding-right: 6px;" />
                 </button>
 
-                <span class="text-xs pl-1 pr-4 text-gray-800 font-semiboldc mx-1" style="padding-right: 15px;"> {{
+                <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold mx-1" style="padding-right: 15px;"> {{
                   activity.likes.length }}</span>
 
               </div>

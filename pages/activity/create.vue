@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="bg-gray-100 min-h-screen flex items-center justify-center">
         <div class="max-w-7xl mx-auto px-20 py-20">
             <h1 class="text-3xl font-bold mb-10 text-center">Create Your Activity</h1>
             <div class="bg-white rounded-lg border-gray-300 shadow dark:border px-20 py-10 sm:max-w-5xl">
