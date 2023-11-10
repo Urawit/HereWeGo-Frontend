@@ -3,7 +3,7 @@
         Pending...
     </div>
 
-    <div>
+    <div class="bg-gray-100 min-h-screen">
         <!-- Text Header -->
         <header class="w-full container mx-auto">
             <div class="flex flex-col items-center py-12">
@@ -39,38 +39,18 @@
                             </nuxt-link>
                         </div>
 
-                        <div class="flex items-center justify-center">
-                            <nuxt-link :to="`/message/${activity.activity.id}`">
-                                <button class="button-9">
-                                    Chats
-                                </button>
-                            </nuxt-link>
-                        </div>
-
                         <!-- Leave the third column as is or add content as needed -->
                         <div>
                             <!-- {{ activity.activity.post_image_path }} -->
                         </div>
                     </div>
-                </div>
-
-
-            </aside>
-
-            <!-- detail activity -->
-            <section class="w-full md:w-2/3 flex flex-col items-center px-3 ml-20">
-
-                <div class="flex flex-col shadow my-4 rounded-lg">
-                    <!-- Activity Image -->
-                    <a>
-                        <img :src="`http://localhost/${activity.activity.post_image_path}`">
-                    </a>
-                    <div class="bg-white flex flex-col justify-start p-6">
-                        <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
-                            MasterActivityName }} </a>
-                        <a class="text-3xl font-bold  pb-4"> {{ activity.activity.detail }}</a>
-                        <a class="text-2xl  pb-4">GOAL : {{ activity.activity.goal }}</a>
-                    </div>
+                    <div class="flex items-center py-2 justify-center">
+                            <nuxt-link :to="`/message`">
+                                <button class="button-9">
+                                    Chat
+                                </button>
+                            </nuxt-link>
+                        </div>
                 </div>
 
                 <form @submit.prevent="onSubmit(activity.activity.id)">
@@ -80,15 +60,48 @@
 
                 </form>
 
-                <div id="Comments" class="bg-[#F8F8F8] z-0 w-full h-[calc(100%-2px)] border-t-2 overflow-auto">
+            </aside>
+
+            <!-- detail activity -->
+            <section class="w-full md:w-2/3 flex flex-col items-center px-3 ml-20">
+
+                <div class="flex flex-col shadow my-4 rounded-lg bg-white">
+                    <!-- Activity Image -->
+                    <a>
+                        <img :src="`http://localhost/${activity.activity.post_image_path}`" class="object-fill h-64 w-[64rem]">
+                    </a>
+                    <div class=" flex flex-col justify-start p-6">
+                        <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
+                            MasterActivityName }} </a>
+                        <a class="text-3xl font-bold  pb-4"> {{ activity.activity.detail}}</a>
+                        <a class="text-2xl  pb-4">GOAL : {{ activity.activity.goal }}</a>
+                    </div>
+
+                    <form @submit.prevent="onSubmit(activity.activity.id)">
+                    <button v-if="!isMemberBoolean" type="submit" id="submit" @click="refreshPage" class="button-9 w-full">
+                        Join
+                    </button>
+                </form>
+                </div>
+
+                <div id="Comments" class="bg-[#F8F8F8] h-[105px] z-0 w-full h-[calc(100%-2px)] border-t-2 overflow-auto">
                     <div class="pt-2"></div>
 
+                    <div id="CreateComment" class="bg-white w-full py-6 px-4 shadow my-4 rounded-lg flex ">
+                        <div class="border-2 border-[#F1F1F2] bg-[#F1F1F2] flex items-center rounded-lg w-full">
+                            <input v-model="newComment" @keyup.enter="postComment(activity.activity.id)" class="bg-[#F1F1F2] text-[14px] focus:outline-none w-full p-2 rounded-lg" type="text" placeholder="Add comment..." />
+                        </div>
+                        <button @click="postComment(activity.activity.id)" class="button-9 mx-4">
+                            Post
+                        </button>
+                    </div>
+
                     <div class="mt-6 text-xl text-gray-500">
-                        <!-- <template v-if="!activity.activity.comments || activity.activity.comments.length === 0"> -->
-                        <template v-if="true">
+                        <template v-if="!activity.activity.comments|| activity.activity.comments.length === 0">
                             Be the first to leave a comment !
                         </template>
                         <template v-else>
+                        
                             <div v-for="comment in activity.activity.comments" :key="comment.id" class="flex items-center px-10 mt-1">
                                 <div class="flex items-center relative w-full" style="margin-right: 20px;">
                                   <img v-if="comment.user.image_path" class="profile-picture"
@@ -135,15 +148,6 @@
                     <div class="mb-5"></div>
                 </div>
 
-                <div id="CreateComment" class="w-full bg-white h-[105px] lg:max-w-[550px] w-full py-6 px-12 border-t-2 flex ">
-                    <div class="border-2 border-[#F1F1F2] bg-[#F1F1F2] flex items-center rounded-lg w-full lg:max-w-[420px]">
-                        <input v-model="newComment" @keyup.enter="postComment(activity.activity.id)" class="bg-[#F1F1F2] text-[14px] focus:outline-none w-full lg:max-w-[420px] p-2 rounded-lg" type="text" placeholder="Add comment..." />
-                    </div>
-                    <button @click="postComment(activity.activity.id)" class="font-semibold text-sm ml-5 pr-1 text-gray-400">
-                    Post
-                    </button>
-                </div>
-
             </section>
             
         </div>
@@ -176,6 +180,8 @@
   const users: any[] = [];
   const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
   const isMemberBoolean = isMember.value.success;
+
+  console.log("activity",activity.value.activity.comments);
 
   onMounted(() => {
 
@@ -364,7 +370,6 @@ async function  cancelEdit() {
     font-size: 100%;
     height: 44px;
     line-height: 1.15;
-    margin: 12px 0 0;
     outline: none;
     overflow: hidden;
     padding: 0 25px;
@@ -376,7 +381,6 @@ async function  cancelEdit() {
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    width: 100%;
 }
 .edit-popup {
   position: fixed;

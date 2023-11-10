@@ -3,16 +3,19 @@
     </div>
     <div class="bg-white relative shadow rounded-lg w-5/6 mx-auto">
         <div class="flex justify-left">
-            <img v-if="!auth.user.image_path" src="@/assets/images/user-default.jpg" />
+            <img v-if="!auth.user.image_path" src="@/assets/images/user-default.jpg" class="rounded-full mx-auto absolute -top-16 w-40 h-40 shadow-md border-4 border-white transition duration-200 transform hover:scale-110" />
             <img v-else :src="`http://localhost/${auth.user.image_path}`"
                 class="rounded-full mx-auto absolute -top-16 w-40 h-40 shadow-md border-4 border-white transition duration-200 transform hover:scale-110" />
         </div>
     </div>
     <div class="container mb-4">
         <div id="content" class="bg-white w-screen ">
-            <div class="mx-80 text-2xl pt-3 text-black">
-                <div id="username text-2xl text-black">
-                    {{ auth.user.username }}
+            <div class="mx-80 pt-3">
+                <div class="text-2xl text-black">
+                    {{ auth.user.firstname }} {{ auth.user.lastname }}
+                </div>
+                <div class="text-xl text-gray-500">
+                    @{{ auth.user.username }}
                 </div>
                 <!-- <div class="mb-4 mt-10 w-auto flex flex-wrap">
                     <span class="cursor-pointer rounded-full bg-gray-300 px-4 py-2 text-sm mr-4 "></span>
