@@ -54,6 +54,12 @@
                     </div>
                 </div>
 
+                <form @submit.prevent="onSubmit(activity.activity.id)">
+                    <button v-if="!isMemberBoolean" type="submit" id="submit" @click="refreshPage" class="button-9">
+                        Join
+                    </button>
+
+                </form>
 
             </aside>
 
@@ -68,27 +74,22 @@
                     <div class="bg-white flex flex-col justify-start p-6">
                         <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{
                             MasterActivityName }} </a>
-                        <a class="text-3xl font-bold  pb-4"> {{ activity.activity.detail }}</a>
+                        <a class="text-3xl font-bold  pb-4"> {{ activity.activity.detail}}</a>
                         <a class="text-2xl  pb-4">GOAL : {{ activity.activity.goal }}</a>
                     </div>
                 </div>
 
-                <form @submit.prevent="onSubmit(activity.activity.id)">
-                    <button v-if="!isMemberBoolean" type="submit" id="submit" @click="refreshPage" class="button-9">
-                        Join
-                    </button>
-
-                </form>
+        
 
                 <div id="Comments" class="bg-[#F8F8F8] z-0 w-full h-[calc(100%-2px)] border-t-2 overflow-auto">
                     <div class="pt-2"></div>
 
                     <div class="mt-6 text-xl text-gray-500">
-                        <!-- <template v-if="!activity.activity.comments || activity.activity.comments.length === 0"> -->
-                        <template v-if="true">
+                        <template v-if="!activity.activity.comments|| activity.activity.comments.length === 0">
                             Be the first to leave a comment !
                         </template>
                         <template v-else>
+                        
                             <div v-for="comment in activity.activity.comments" :key="comment.id" class="flex items-center px-10 mt-1">
                                 <div class="flex items-center relative w-full" style="margin-right: 20px;">
                                   <img v-if="comment.user.image_path" class="profile-picture"
@@ -176,6 +177,8 @@
   const users: any[] = [];
   const { data: isMember } = await useMyFetch<any>(`isMember/${route.params.id}`, {});
   const isMemberBoolean = isMember.value.success;
+
+  console.log("activity",activity.value.activity.comments);
 
   onMounted(() => {
 

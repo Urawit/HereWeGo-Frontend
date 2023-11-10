@@ -24,7 +24,7 @@
         </button>
       </div>
 
-      <div class="pb-1 text-center flex items-center px-4" style="padding-right: 4px;">
+      <div class="pb-1 text-center flex items-center px-2" style="padding-right: 4px;">
         <button @click="toggleMyCreationFilter" class="rounded-full bg-gray-200 cursor-pointer"
           :title="showOnlyMyCreationFlag ? 'Cancel My Activites Filter' : 'Activities you have created'">
           <Icon name="bx:bxs-cog" size="40" :color="showOnlyMyCreationFlag ? '#ff0000' : ''" />
