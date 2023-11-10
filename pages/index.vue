@@ -4,11 +4,24 @@
     <div class="flex items-center justify-center w-full md:w-auto "
       style="padding-top: 75px; padding-bottom: 0px; padding-left: 20px; padding-right: 20px;">
       <input type="text" v-model="searchTerm" @input="search" placeholder="Search Activity names"
-        class="block text-m text-gray-900 rounded-lg w-96 h-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-        style="padding-top: 0px; padding-bottom: 2px; padding-left: 10px; padding-right: 20px;" />
+        class="block py-2 pr-2 pl-4 text-m text-gray-900 rounded-lg w-96 h-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+        style="padding-top: 0px; padding-bottom: 2px; padding-left: 6px; padding-right: 20px;" />
+      <button class="mx-2 group">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-8 transition duration-500 ease-in-out group-hover:scale-125">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="invisible group-hover:scale-105 group-hover:visible group-hover:animate-[move_35s_linear_infinite] group-hover:stroke-blue-600" stroke-dasharray="50"  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+        <div class="hidden group-hover:block group-hover:translate-y-1 -mx-3 mt-3 absolute bg-gray-400 text-white rounded px-2 py-1 text-sm whitespace-nowrap">
+            <span>
+              Search
+            </span>
+        </div>
+      </button>
+    </div>
 
-      <div class="pb-1 text-center flex items-center px-4" style="padding-right: 4px;">
-        <button @click="toggleFavoritesFilter" class="rounded-full bg-gray-200 cursor-pointer"
+    <div class="flex items-center justify-center w-full my-10">
+      <div class="pb-1 text-center flex items-center" style="padding-right: 8px;">
+        <button @click="toggleFavoritesFilter" class="rounded-full bg-gray-200 cursor-pointer transition-all duration-500 ease-in-out hover:ring-2 hover:ring-[#FFD700] hover:ring-offset-base-100 hover:ring-offset-2 peer-focus:scale-125 p-1.5"
           :title="showOnlyFavoritesFlag ? 'Cancel Favorites Filter' : 'Favorite Activities'">
           <Icon name="bx:bxs-bookmarks" size="40" :color="showOnlyFavoritesFlag ? '#FFD700' : ''" />
           <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 25px;">Favorite
@@ -16,22 +29,21 @@
         </button>
       </div>
 
-      <div class="pb-1 text-center flex items-center px-4" style="padding-right: 4px;">
-        <button @click="toggleMyActivitiesFilter" class="rounded-full bg-gray-200 cursor-pointer"
+      <div class="pb-1 text-center flex items-center" style="padding-right: 4px;">
+        <button @click="toggleMyActivitiesFilter" class="rounded-full bg-gray-200 cursor-pointer transition-all duration-500 ease-in-out hover:ring-2 hover:ring-[#59C8F8] hover:ring-offset-base-100 hover:ring-offset-2 peer-focus:scale-125 p-1.5"
           :title="showOnlyMyActivitiesFlag ? 'Cancel My Activites Filter' : 'Activities you have joined'">
           <Icon name="bx:bxs-user-circle" size="40" :color="showOnlyMyActivitiesFlag ? '#59C8F8' : ''" />
           <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 25px;">My Activities</span>
         </button>
       </div>
 
-      <div class="pb-1 text-center flex items-center px-4" style="padding-right: 4px;">
-        <button @click="toggleMyCreationFilter" class="rounded-full bg-gray-200 cursor-pointer"
+      <div class="pb-1 text-center flex items-center" style="padding-right: 4px;">
+        <button @click="toggleMyCreationFilter" class="rounded-full bg-gray-200 cursor-pointer transition-all duration-500 ease-in-out hover:ring-2 hover:ring-[#ff0000] hover:ring-offset-base-100 hover:ring-offset-2 peer-focus:scale-125 p-1.5"
           :title="showOnlyMyCreationFlag ? 'Cancel My Activites Filter' : 'Activities you have created'">
           <Icon name="bx:bxs-cog" size="40" :color="showOnlyMyCreationFlag ? '#ff0000' : ''" />
           <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 25px;">My Creation</span>
         </button>
       </div>
-
     </div>
 
     <div class="max-w-7xl mx-auto px-20 py-20">
@@ -79,34 +91,34 @@
             <div class="flex items-center px-3 mt-1">
               <div class="pb-4 text-center flex items-center" style="padding-right: 4px;">
                 <button @click="isliked(activity) ? unlikePost(activity.id) : likePost(activity.id)"
-                  class="rounded-full bg-gray-200 cursor-pointer" :title="isliked(activity) ? 'Unlike' : 'Like'">
-                  <Icon name="bx:bxs-heart" size="45" :color="isliked(activity) ? '#F02C56' : ''"
+                  class="rounded-full bg-gray-100 cursor-pointer transition duration-500 ease-in-out hover:scale-110 hover:ring-2 hover:ring-[#F02C56] hover:ring-offset-base-100 hover:ring-offset-2 peer-focus:scale-110" :title="isliked(activity) ? 'Unlike' : 'Like'">
+                  <Icon name="bx:bxs-heart" size="40" :color="isliked(activity) ? '#F02C56' : ''"
                     style="padding-top: 0px; padding-bottom: 2px; padding-left: 6px; padding-right: 6px;" />
                 </button>
 
-                <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 15px;"> {{
+                <span class="text-xs pl-1 pr-4 text-gray-800 font-semiboldc mx-1" style="padding-right: 15px;"> {{
                   activity.likes.length }}</span>
 
               </div>
               <div class="pb-4 text-center flex items-center" style="padding-right: 4px;">
-                <button @click="navigateTo(`/activity/${activity.id}`)" class="rounded-full bg-gray-200 cursor-pointer"
+                <button @click="navigateTo(`/activity/${activity.id}`)" class="rounded-full bg-gray-200 cursor-pointer transition duration-500 ease-in-out hover:scale-110 hover:ring-2 hover:ring-blue-500 hover:ring-offset-base-100 hover:ring-offset-2 peer-focus:scale-110"
                   title="Comment">
-                  <Icon name="bx:bxs-message-rounded-dots" size="45" :color="isLiked ? '#F02C56' : ''"
+                  <Icon name="bx:bxs-message-rounded-dots" size="40" :color="isLiked ? '#F02C56' : ''"
                     style="padding-top: 0px; padding-bottom: 2px; padding-left: 6px; padding-right: 6px;" />
                 </button>
 
-                <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 35px;">{{
+                <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold mx-1" style="padding-right: 35px;">{{
                   activity.comments.length }}</span>
 
               </div>
               <div class="pb-4 text-center flex items-center" style="padding-right: 4px;">
                 <button @click="isSaved(activity) ? unSavedPost(activity.id) : savedPost(activity.id)"
-                  class="rounded-full bg-gray-200 cursor-pointer" :title="isSaved(activity) ? 'Unsaved' : 'Saved'">
-                  <Icon name="bx:bxs-bookmark-star" size="45" :color="isSaved(activity) ? '#FFD700' : ''"
+                  class="rounded-full bg-gray-200 cursor-pointer -mx-5 group transition duration-500 ease-in-out hover:scale-110 hover:ring-2 hover:ring-[#FFD700] hover:ring-offset-base-100 hover:ring-offset-2 peer-focus:scale-110" :title="isSaved(activity) ? 'Unsaved' : 'Saved'">
+                  <Icon name="bx:bxs-bookmark-star" class="fill-[#FFD700]" size="40" :color="isSaved(activity) ? '#FFD700' : ''"
                     style="padding-top: 0px; padding-bottom: 2px; padding-left: 6px; padding-right: 6px;" />
                 </button>
 
-                <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 0px;">{{
+                <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold mx-6" style="padding-right: 0px;">{{
                   activity.favorites.length }}</span>
 
               </div>

@@ -10,9 +10,12 @@
     </div>
     <div class="container mb-4">
         <div id="content" class="bg-white w-screen ">
-            <div class="mx-80 text-2xl pt-3 text-black">
-                <div id="username text-2xl text-black">
-                    {{ auth.user.username }}
+            <div class="mx-80 pt-3">
+                <div class="text-2xl text-black">
+                    {{ auth.user.firstname }} {{ auth.user.lastname }}
+                </div>
+                <div class="text-xl text-gray-500">
+                    @{{ auth.user.username }}
                 </div>
                 <!-- <div class="mb-4 mt-10 w-auto flex flex-wrap">
                     <span class="cursor-pointer rounded-full bg-gray-300 px-4 py-2 text-sm mr-4 "></span>
