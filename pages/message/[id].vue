@@ -94,6 +94,7 @@
     scrollBottom();
   });
 
+
   const getChat = () => {
     const paramValue = Array.isArray(params) ? params[0] : params;
     const match = paramValue.match(/\d+/);
@@ -103,6 +104,7 @@
     if (params.includes('friend')) {
       selection.value = "friend";
       friend_id.value = id!;
+  
       fetchPrivateMessages();
     } else if (params.includes('activity')) {
       selection.value = "activity";
@@ -116,6 +118,9 @@
       const response = await axios.get('http://localhost/api/myFriends', options);
       console.log("all chats:", response.data.chats);
       allChats.value = response.data.chats;
+      if (response.data.chats.length > 0) {
+        selectChat(response.data.chats[0]); // Select the first chat automatically
+      }
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -124,7 +129,7 @@
   const selectChat = (chat: any) => {
     console.log("chat:", chat);
     chat_id.value = chat.id;
-    chatName.value = chat.name
+    chatName.value = chat.name;
     if (chat.friend_id) {
       selection.value = "friend";
       console.log("friend");
@@ -133,6 +138,7 @@
     } else {
       selection.value = "activity";
       console.log("activity");
+      chatName.value = 'Group Activity';
       fetchGroupMessages();
     }
   }

@@ -75,6 +75,8 @@ const myJoinedActivities = async () => {
         console.error('Error fetching messages:', error);
     }
 };
+
+
 async function leaveActivity(_id: any) {
     console.log("Leaving activity with id:", _id);
 

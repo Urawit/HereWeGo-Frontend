@@ -211,7 +211,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useAuthStore } from "~/stores/useAuthStore";
 import useMyFetch from '~/composables/useMyFetch';
 // const auth = useAuthStore();

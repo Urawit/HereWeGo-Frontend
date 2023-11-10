@@ -85,7 +85,7 @@ async function submit() {
         // Assuming the response includes the associated email with the password
         const { email, access_token, token_type } = response.value;
         if (email !== formData.email) {
-            errors.email = "Email and password do not match.";
+            // errors.email = "Email and password do not match.";
             isFormValid = false;
         }
 
