@@ -320,7 +320,7 @@
 
   const allFriend = async () => {
     try {
-      const response = await axios.get('http://localhost/api/myFriends', options);
+      const response = await axios.get('http://localhost/api/friend', options);
       console.log("friends:", response.data.friendList);
       friends.value = response.data.friendList;
     } catch (error) {
