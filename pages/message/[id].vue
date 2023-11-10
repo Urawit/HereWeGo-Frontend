@@ -1,7 +1,10 @@
 <template>
   <div class="container">
-    <div class="friendsContainer">
-      <div class="friendsList">
+    <div class="friendsContainer bg-gray-100 border-x-2 border-gray-300">
+      <span class="font-bold text-4xl mb-7">
+        Messages
+      </span>
+      <div class="friendsList bg-white border-t-2 overflow-auto">
         <button
           v-for="chat in allChats"
           :key="chat.id"
@@ -14,13 +17,15 @@
             :src="`http://localhost/${chat.image_path}` ? `http://localhost/${chat.image_path}` : 'path-to-default-image'"
             alt="Friend Image"
           />
-          <span>{{ chat.name }}</span>
-          <span>{{ chat.message }}</span>
+          <div>
+            <span>{{ chat.name }}</span>
+            <span>{{ chat.message }}</span>
+          </div>
         </button>
       </div>
     </div>
 
-    <div class="chatContainer">
+    <div class="chatContainer bg-gray-100 text-black min-h-screen">
       <button @click="">
         <p class="chatTitle">{{ selection === 'friend' ? chatName : 'Group Activity' }}</p>
       </button>
@@ -36,19 +41,15 @@
           <p class="message-content">{{ chat.message }}</p>
         </div>
       </div>
-
-      <div class="inputContainer">
-        <input
+      <input
           id="btn-input"
           type="text"
           name="message"
-          class="form-control input-sm message-input"
+          class="form-control input-sm message-input w-[63rem] min-h-12 max-h-12 my-2 relative rounded-lg bg-white"
           placeholder="Type your message here..."
           v-model="newMessage"
           @keyup.enter="storeMessage"
         />
-        <!-- <button class="btn-send" @click="storeMessage">Send</button> -->
-      </div>
     </div>
   </div>
 </template>
@@ -240,7 +241,6 @@
 
   .friendsContainer {
     width: 25%;
-    background-color: #394049;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -265,10 +265,7 @@
   .activitySelect {
     display: flex;
     align-items: center;
-    background-color: #57606e;
-    border-radius: 8px;
     padding: 5px 10px; 
-    color: #fff;
     text-align: center;
     cursor: pointer;
     font-size: 14px; 
@@ -277,7 +274,6 @@
 
   .activitiesContainer {
     width: 25%;
-    background-color: #394049;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -300,7 +296,6 @@
 
   .chatContainer {
     flex-grow: 1;
-    background-color: #394049;
     display: flex;
     flex-direction: column;
     padding: 50px;
@@ -315,11 +310,11 @@
     gap: 10px;
     overflow-y: scroll;
     padding-right: 20px;
-    background-color: gainsboro;
+    background-color: white;
     padding: 10px;
     border-radius: 10px;
-    max-height: 730px;
-    min-height: 730px;
+    max-height: 450px;
+    min-height: 450px;
     padding-right: 20px;
     margin-right: -20px; 
   }
@@ -338,7 +333,7 @@
   }
 
   .message {
-    background-color: #57606e;
+    background-color: white;
     border-radius: 8px;
     padding: 10px;
     color: #fff;
@@ -362,16 +357,12 @@
     display: flex;
     gap: 10px;
     padding: 20px 20px;
-    background-color: #394049;
+    background-color: white;
   }
 
   .message-input {
     flex-grow: 1;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #57606e;
-    color: #fff;
   }
 
   .btn-send {
@@ -384,7 +375,7 @@
   }
 
   .chatTitle {
-    color: white;
+    color: black;
     font-size: 20px;
     margin-bottom: 10px;
   }

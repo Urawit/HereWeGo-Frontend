@@ -20,7 +20,7 @@
         </MenuLink>
       </div>
 
-      <div class="flex items-center justify-center w-full md:w-auto">
+      <!-- <div class="flex items-center justify-center w-full md:w-auto">
         <input
           type="text"
           v-model="searchTerm"
@@ -37,7 +37,7 @@
             </li>
           </ul>
         </div>
-      </div>
+      </div> -->
       
       <div class="flex items-center space-x-6 mx-10">
         <div v-if="!isLogin">
@@ -88,7 +88,7 @@
             <div class="chat-alert" :class="{ open: chats_counter }"/>
             <div class="dropdown-chat my-8 p-4" :class="{ open: isDropdownChat }">
               <span class="text-black text-2xl font-bold">Messages</span>
-              <ul >
+              <ul class="divide-y-2">
                   <li
                     v-for="chat in chats"
                     :key="chat.id"
@@ -105,7 +105,6 @@
                       <p class="frontdatetime">
                         {{datetime(chat.created_at)}}
                       </p>
-                      <div class="underline"/>
                     </MenuLink>
                   </li>
               </ul>
@@ -135,7 +134,7 @@
                     :value="friend.friend_id"
                     @click="toggleDropdownAllOff()"
                   >
-                    <nuxt-link  :to="`/profile/${friend_id}`">
+                    <nuxt-link  :to="`/profile/${friend.friend_id}`">
                       <p class="frontheader">
                         {{friend.friend_username}}
                       </p>
@@ -177,7 +176,6 @@
                       <p class="frontdatetime">
                         {{datetime(notification.created_at)}}
                       </p>
-                      <div class="underline"/>
                     </MenuLink>
                   </li>
               </ul>
@@ -279,9 +277,9 @@
 
   const searchFriend = () => {
     if (searchTermFriend.value === '') {
-      allUser();
+      allFriend();
     } else {
-      users.value = users.value.filter(user => user.username.toLowerCase().includes(searchTermFriend.value.toLowerCase()));
+      friends.value = friends.value.filter(friend => friend.friend_username.toLowerCase().includes(searchTermFriend.value.toLowerCase()));
   }
   };
 
