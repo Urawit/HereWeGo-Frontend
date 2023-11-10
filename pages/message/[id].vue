@@ -19,7 +19,7 @@
           />
           <div>
             <span>{{ chat.name }}</span>
-            <span>{{ chat.message }}</span>
+            <!-- <span>{{ chat.message }}</span> -->
           </div>
         </button>
       </div>
