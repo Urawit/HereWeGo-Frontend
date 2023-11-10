@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     <div class="flex items-center py-2 justify-center">
-                            <nuxt-link :to="`/message`">
+                            <nuxt-link :to="`/message/activity${activity.activity.id}`">
                                 <button class="button-9">
                                     Chat
                                 </button>
@@ -68,7 +68,7 @@
                 <div class="flex flex-col shadow my-4 rounded-lg bg-white">
                     <!-- Activity Image -->
                     <a>
-                        <img :src="`http://localhost/${activity.activity.post_image_path}`" class="object-fill h-64 w-[64rem]">
+                        <img :src="`http://localhost/${activity.activity.post_image_path}`" class="object-contain object-scale-down h-64 w-[62rem]">
                     </a>
                     <div class=" flex flex-col justify-start p-6">
                         <a class="text-blue-700 text-sm font-bold uppercase pb-4"> {{

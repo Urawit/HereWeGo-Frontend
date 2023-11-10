@@ -73,8 +73,8 @@ onMounted(() => {
 const myActivities = async () => {
     try {
         const response = await axios.get('http://localhost/api/myActivities', options);
-        console.log("my activity", response.data);
-        activities.value = response.data;
+        console.log("my activity", response.data.activities);
+        activities.value = response.data.activities;
     } catch (error) {
         console.error('Error fetching messages:', error);
     }
