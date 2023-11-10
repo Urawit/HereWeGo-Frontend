@@ -112,10 +112,16 @@
     if (params.includes('friend')) {
       selection.value = "friend";
       friend_id.value = id!;
+      const requestData = JSON.stringify({ type: 'friend', id: id });
+      const response = await axios.post('http://localhost/api/getNameChat',requestData, options);
+      chatName.value = response.data.username;
       fetchPrivateMessages();
     } else if (params.includes('activity')) {
       selection.value = "activity";
       chat_id.value = id!;
+      const requestData = JSON.stringify({ type: 'activity', id: id });
+      const response = await axios.post('http://localhost/api/getNameChat',requestData, options);
+      chatName.value = response.data.name;
       fetchGroupMessages();
     }
   }
