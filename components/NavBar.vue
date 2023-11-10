@@ -227,8 +227,10 @@
   const notifications = ref([]);
   const chats = ref([]);
   const users = ref([]);
+  const searchTerm = ref('');
   const notifications_counter = ref(0)
   const chats_counter = ref(0)
+
   const options = {
     headers: {
       'Content-Type': 'application/json',
@@ -256,6 +258,14 @@
   onMounted(() => {
     allUser();
   });
+
+const search = () => {
+  if (searchTerm.value === '') {
+  // getAllActivities();
+  } else {
+  activities.value = activities.value.filter(activity => activity.name.toLowerCase().includes(searchTerm.value.toLowerCase()));
+}
+};
 
   const getLinkNotification = (notification: any) => {
     if (notification.header.includes('Friend')) {
@@ -468,14 +478,12 @@
   padding: 10px;
   cursor: pointer;
 }
-
 .dropdown-profile li:hover,
 .dropdown-chat li:hover,
 .dropdown-user li:hover,
 .dropdown-notification li:hover {
   background-color: #ebebeb;
 }
-
 .dropdown-chat::-webkit-scrollbar,
 .dropdown-user::-webkit-scrollbar,
 .dropdown-notification::-webkit-scrollbar {
