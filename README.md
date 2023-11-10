@@ -94,15 +94,14 @@ bun run preview
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
 # UI Flow
-<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2F0YsNy0CI7STTDrmrKylTzg%2FUntitled%3Ftype%3Ddesign%26node-id%3D0%253A1%26mode%3Ddesign%26t%3Dw2exJvw2HVAn5xQU-1" allowfullscreen></iframe>
-
+![UI flow](image.png)
 
 # User Persona
-ชื่อ: เคท
-อายุ: 18 ปี
-อาชีพ: นักศึกษา
-ชีวประวัติ: เคทเป็นคนที่ชื่นชอบในการทำกิจกรรม การเข้าร่วมกิจกรรมต่างๆ เคทไม่ชอบอยู่เฉยๆ ชอบไปเที่ยว, ทำกิจกรรมกับเพื่อน และเคทชื่นชอบการพบปะผู้คนใหม่ๆ 
-ความต้องการหลัก: ต้องการที่จะเข้าร่วมกิจกรรม และเข้าไปพบปะพูดคุยกับผู้คนใหม่ๆ
+* ชื่อ: เคท
+* อายุ: 18 ปี
+* อาชีพ: นักศึกษา
+* ชีวประวัติ: เคทเป็นคนที่ชื่นชอบในการทำกิจกรรม การเข้าร่วมกิจกรรมต่างๆ เคทไม่ชอบอยู่เฉยๆ ชอบไปเที่ยว, ทำกิจกรรมกับเพื่อน และเคทชื่นชอบการพบปะผู้คนใหม่ๆ 
+* ความต้องการหลัก: ต้องการที่จะเข้าร่วมกิจกรรม และเข้าไปพบปะพูดคุยกับผู้คนใหม่ๆ
 
 
 # Slide
