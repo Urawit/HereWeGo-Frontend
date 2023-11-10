@@ -2,7 +2,6 @@
   <div class="container">
     <div class="friendsContainer">
       <div class="friendsList">
-        <p class="message-content"> FRIEND LIST </p>
         <button
           v-for="chat in allChats"
           :key="chat.id"

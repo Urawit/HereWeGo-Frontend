@@ -87,11 +87,11 @@
                     :value="user.id"
                     @click="toggleDropdownAllOff()"
                   >
-                    <MenuLink :to="`/user/${user.id}`">
+                    <nuxt-link  :to="`/user/${user.id}`">
                       <p class="frontheader">
                         {{user.username}}
                       </p>
-                    </MenuLink>
+                    </nuxt-link >
                     <div class="underline"/>
                   </li>
               </ul>

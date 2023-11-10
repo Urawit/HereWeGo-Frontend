@@ -3,7 +3,7 @@
         class="border-2 mx-auto my-12 w-4/6 h-40 border-black">
         <div class="grid grid-cols-4 gap-1">
             <div class="my-5">
-                <img v-if="activity.post_image_path" :src="`http://localhost/${activity.post_image_path}`" 
+                <img v-if="activity.post_image_path" :src="`http://localhost/${activity.post_image_path}`"
                     class="mx-5 w-28 h-28">
             </div>
             <div id="NameActivity" class="">
@@ -18,23 +18,24 @@
             </div>
             <div id="dateActivity" class="">
                 <div class="my-5">
-                  
-                  {{
-                    new Date(activity.start_date).getDate().toString().padStart(2, '0') + ' ' +
-                    new Date(activity.start_date).toLocaleString('en-US', { month: 'short' }) + ' ' +
-                    new Date(activity.start_date).toLocaleString('en-US', {
-                      hour: '2-digit', minute:
-                        '2-digit', hour12: true
-                    })
-                  }}
-              
+
+                    {{
+                        new Date(activity.start_date).getDate().toString().padStart(2, '0') + ' ' +
+                        new Date(activity.start_date).toLocaleString('en-US', { month: 'short' }) + ' ' +
+                        new Date(activity.start_date).toLocaleString('en-US', {
+                            hour: '2-digit', minute:
+                                '2-digit', hour12: true
+                        })
+                    }}
+
                 </div>
             </div>
             <div id="button" class="">
                 <div class="my-4">
                     <div class="">
                         <button
-                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 mx-16 my-10 w-32 border border-gray-700 rounded">
+                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 mx-16 my-10 w-32 border border-gray-700 rounded"
+                            @click="leaveActivity(activity.activity_id)">
                             Leave
                         </button>
                     </div>
@@ -80,6 +81,20 @@ const myJoinedActivities = async () => {
         console.error('Error fetching messages:', error);
     }
 };
+async function leaveActivity(_id: any) {
+    console.log("Leaving activity with id:", _id);
+
+    try {
+            const { data: response } = await useMyFetch<any>(`unjoinActivity/${_id}`, {
+                method: "POST",
+        });
+        location.reload();
+
+    } catch (error) {
+        console.error("Error while leaving activity:", error);
+    }
+}
+
 
 
 </script>
