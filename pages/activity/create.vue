@@ -210,11 +210,22 @@
   
 
 <script setup lang="ts">
+import axios from "axios";
 import { reactive, ref } from "vue";
 import useMyFetch from '~/composables/useMyFetch';
+import { useAuthStore } from "~/stores/useAuthStore";
+const auth = useAuthStore();
+const options = {
+  headers: {
+    'Content-Type': 'application/json',
+    "Accept": "application/json",
+    "Authorization": `Bearer ${auth.token}`,
+  }
+}
 
-const { data: response } = await useMyFetch<any>("allActivities", {})
-const categories = response.value;
+const response = await axios.get('http://localhost/api/allActivities', options);
+const categories = response.data;
+console.log("categories: ", categories)
 
 const authStore = useAuthStore();
 const user_id = computed(() => authStore.user.id);
