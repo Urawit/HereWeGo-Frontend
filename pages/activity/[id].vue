@@ -200,7 +200,7 @@ users.forEach((user, index) => {
 const refreshPage = () => {
     setTimeout(() => {
         location.reload();
-    }, 4500);
+    }, 4000);
 };
 
 // To log individual user data within the array:

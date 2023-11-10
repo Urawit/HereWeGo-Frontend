@@ -212,7 +212,9 @@
 <script setup lang="ts">
 import axios from "axios";
 import { reactive, ref } from "vue";
+import { useAuthStore } from "~/stores/useAuthStore";
 import useMyFetch from '~/composables/useMyFetch';
+import BoxIcon from 'box-icon';
 import { useAuthStore } from "~/stores/useAuthStore";
 const auth = useAuthStore();
 const options = {

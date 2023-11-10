@@ -53,20 +53,20 @@
             <div class="dropdown-chat" :class="{ open: isDropdownChat }">
               <ul>
                   <li
-                    v-for="friend in friends"
-                    :key="friend.id"
-                    :value="friend.id"
+                    v-for="chat in chats"
+                    :key="chat.id"
+                    :value="chat.id"
                     @click="toggleDropdownAllOff()"
                   >
-                    <MenuLink :to="`/message`">
+                    <MenuLink :to="getLinkChat(chat)">
                       <p class="frontheader">
-                        {{friend.name}}
+                        {{chat.name}}
                       </p>
                       <p>
-                        {{friend.message}}
+                        {{chat.message}}
                       </p>
                       <p class="frontdatetime">
-                        {{datetime(friend.created_at)}}
+                        {{datetime(chat.created_at)}}
                       </p>
                       <div class="underline"/>
                     </MenuLink>
@@ -167,7 +167,7 @@
   const isDropdownUser = ref(false); 
   const isDropdownChat = ref(false); 
   const notifications = ref([]);
-  const friends = ref([]);
+  const chats = ref([]);
   const users = ref([]);
   const notifications_counter = ref(0)
   const chats_counter = ref(0)
@@ -192,7 +192,7 @@
   channel.bind('Message' + auth.user.id, () => {
     console.log("Pusher Message", chats_counter.value);
     chats_counter.value += 1;
-    myFriends();
+    myChats();
   });
 
   onMounted(() => {
@@ -201,9 +201,17 @@
 
   const getLinkNotification = (notification: any) => {
     if (notification.header.includes('Friend')) {
-      return `/profile/${notification.id}`;
+      return `/profile/${notification.link_id}`;
     } else if (notification.header.includes('Activity')) {
-      return `/activity/${notification.id}`;
+      return `/activity/${notification.link_id}`;
+    }
+  }
+
+  const getLinkChat= (chat: any) => {
+    if (chat.friend_id) {
+      return `/message/friend${chat.friend_id}`;
+    } else {
+      return `/message/activity${chat.id}`;
     }
   }
 
@@ -217,7 +225,7 @@
     }
   };
 
-  const myFriends = async () => {
+  const myChats = async () => {
     const auth = useAuthStore();
     const options = {
       headers: {
@@ -228,8 +236,8 @@
     }
     try {
       const response = await axios.get('http://localhost/api/myFriends', options);
-      console.log("friends:", response.data.chats);
-      friends.value = response.data.chats;
+      console.log("chats:", response.data.chats);
+      chats.value = response.data.chats;
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -270,7 +278,7 @@
   }
 
   const toggleDropdownChat = () => {
-    myFriends();
+    myChats();
     chats_counter.value = 0;
     isDropdownChat.value = !isDropdownChat.value;
     isDropdownNotification.value = false;
