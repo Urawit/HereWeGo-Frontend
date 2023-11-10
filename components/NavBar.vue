@@ -87,7 +87,7 @@
                     :value="user.id"
                     @click="toggleDropdownAllOff()"
                   >
-                    <MenuLink :to="`/friend`">
+                    <MenuLink :to="`/user/${user.id}`">
                       <p class="frontheader">
                         {{user.username}}
                       </p>
