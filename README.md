@@ -37,7 +37,12 @@ yarn install
 
 # bun
 bun install
-```
+
+# pusher (.env on backend)
+PUSHER_APP_ID=1706063
+PUSHER_APP_KEY=ff912493cd813e50a2e3
+PUSHER_APP_SECRET=edb69be9b1ed93b04b4a
+PUSHER_APP_CLUSTER=ap1
 
 ## Development Server
 
