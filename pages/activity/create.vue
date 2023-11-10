@@ -214,15 +214,14 @@ import axios from "axios";
 import { reactive, ref } from "vue";
 import { useAuthStore } from "~/stores/useAuthStore";
 import useMyFetch from '~/composables/useMyFetch';
-import BoxIcon from 'box-icon';
-import { useAuthStore } from "~/stores/useAuthStore";
+// import BoxIcon from 'box-icon';
 const auth = useAuthStore();
 const options = {
-  headers: {
-    'Content-Type': 'application/json',
-    "Accept": "application/json",
-    "Authorization": `Bearer ${auth.token}`,
-  }
+    headers: {
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": `Bearer ${auth.token}`,
+    }
 }
 
 const response = await axios.get('http://localhost/api/allActivities', options);
@@ -365,10 +364,20 @@ async function createActivity() {
         formData.append('image', uploadedFile.value);
 
         try {
-            const response = await fetch('http://localhost/api/createActivity', {
-                method: "POST",
-                body: formData,  // Send the form data
+            // const response = await fetch('http://localhost/api/createActivity', {
+            //     method: "POST",
+            //     body: formData,  // Send the form data
+            // });
+
+            const response = await axios.post('http://localhost/api/createActivity', formData, {
+                maxContentLength: 1024 * 1024, // Max content length (1 MB)
+                maxBodyLength: 1024 * 1024, // Max body length (1 MB)
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Ensure correct content type for form data
+                },
             });
+
+            console.log(response.data);
 
             if (response.ok) {
                 const responseData = await response.json();
