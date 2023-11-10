@@ -20,14 +20,25 @@
         </MenuLink>
       </div>
 
-      <!-- <div class="flex items-center justify-center w-full md:w-auto ">
-        <input type="text" v-model="searchTerm" @input="search" placeholder=""
-          class="block py-2.5 mr-3 text-m text-gray-900 rounded-lg w-80 h-9 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" />
-        <button>
-          <img src="@/assets/images/icon/search.png" class="w-6 h-6" />
-        </button>
-      </div> -->
-
+      <div class="flex items-center justify-center w-full md:w-auto">
+        <input
+          type="text"
+          v-model="searchTerm"
+          @input="searchUser"
+          placeholder="Search User All across our web"
+          class="block py-2.5 mr-3 text-m text-gray-900 rounded-lg w-80 h-9 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+        />
+        <div class="dropdown-container">
+          <ul v-if="showDropdown" class="user-list">
+            <li v-for="user in users" :key="user.id" @click="selectUser(user)">
+              <nuxt-link :to="`/profile/${user.id}`">
+                <p class="frontheader">{{ user.username }}</p>
+              </nuxt-link>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
       <div class="flex items-center space-x-6 mx-10">
         <div v-if="!isLogin">
           <MenuLink to="/login">
@@ -114,16 +125,19 @@
             </button>
             <div class="dropdown-user my-8 p-4" :class="{ open: isDropdownUser }">
               <span class="text-black text-2xl font-bold">Friends</span>
-              <ul class="divide-y-2">
+              <input type="text" v-model="searchTermFriend" @input="searchFriend" placeholder="Search Friend"
+                class="block py-2 pr-2 pl-4 text-m text-gray-900 rounded-lg w-64 p-2 my-2 h-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                style="padding-top: 0px; padding-bottom: 2px; padding-left: 6px; padding-right: 20px;" />
+              <ul>
                   <li
-                    v-for="user in users"
-                    :key="user.id"
-                    :value="user.id"
+                    v-for="friend in friends"
+                    :key="friend.friend_id"
+                    :value="friend.friend_id"
                     @click="toggleDropdownAllOff()"
                   >
-                    <nuxt-link  :to="`/profile/${user.id}`">
+                    <nuxt-link  :to="`/profile/${friend_id}`">
                       <p class="frontheader">
-                        {{user.username}}
+                        {{friend.friend_username}}
                       </p>
                     </nuxt-link >
                   </li>
@@ -146,7 +160,7 @@
             <div class="notification-alert" :class="{ open: notifications_counter }"/>
             <div class="dropdown-notification my-8 p-4" :class="{ open: isDropdownNotification }">
               <span class="text-black text-2xl font-bold">Notification</span>
-              <ul class="divide-y-2">
+              <ul>
                   <li
                     v-for="notification in notifications"
                     :key="notification.id"
@@ -224,10 +238,13 @@
   const isDropdownNotification = ref(false); 
   const isDropdownUser = ref(false); 
   const isDropdownChat = ref(false); 
+  const showDropdown = ref(false);
   const notifications = ref([]);
   const chats = ref([]);
   const users = ref([]);
+  const friends = ref([]);
   const searchTerm = ref('');
+  const searchTermFriend = ref('');
   const notifications_counter = ref(0)
   const chats_counter = ref(0)
 
@@ -257,15 +274,25 @@
 
   onMounted(() => {
     allUser();
+    allFriend();
   });
 
-const search = () => {
-  if (searchTerm.value === '') {
-  // getAllActivities();
-  } else {
-  activities.value = activities.value.filter(activity => activity.name.toLowerCase().includes(searchTerm.value.toLowerCase()));
-}
-};
+  const searchFriend = () => {
+    if (searchTermFriend.value === '') {
+      allUser();
+    } else {
+      users.value = users.value.filter(user => user.username.toLowerCase().includes(searchTermFriend.value.toLowerCase()));
+  }
+  };
+
+  const searchUser = () => {
+    if (searchTerm.value === '') {
+      allUser();
+    } else {
+      users.value = users.value.filter(user => user.username.toLowerCase().includes(searchTerm.value.toLowerCase()));
+    }
+    showDropdown.value = true; 
+  };
 
   const getLinkNotification = (notification: any) => {
     if (notification.header.includes('Friend')) {
@@ -288,6 +315,16 @@ const search = () => {
       const response = await axios.get('http://localhost/api/users', options);
       console.log("users:", response.data.users);
       users.value = response.data.users;
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const allFriend = async () => {
+    try {
+      const response = await axios.get('http://localhost/api/myFriends', options);
+      console.log("friends:", response.data.friendList);
+      friends.value = response.data.friendList;
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -385,7 +422,16 @@ const search = () => {
 </script>
 
 <style scoped>
+.dropdown-container {
+  max-height: 150px; /* Set the maximum height to make it small */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
 
+.user-list {
+  list-style-type: none; /* Remove default list styles */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
 .dropdown-profile {
   position: absolute;
   top: 100%;
