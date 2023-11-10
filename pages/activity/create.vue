@@ -213,7 +213,6 @@
 import { reactive, ref } from "vue";
 import { useAuthStore } from "~/stores/useAuthStore";
 import useMyFetch from '~/composables/useMyFetch';
-import BoxIcon from 'box-icon';
 
 const { data: response } = await useMyFetch<any>("allActivities", {})
 const categories = response.value;
