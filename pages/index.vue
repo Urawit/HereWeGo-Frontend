@@ -4,34 +4,30 @@
     <div class="flex items-center justify-center w-full md:w-auto "
       style="padding-top: 75px; padding-bottom: 0px; padding-left: 20px; padding-right: 20px;">
       <input type="text" v-model="searchTerm" @input="search" placeholder="Search Activity names"
-        class="block py-2 pr-2 pl-4 text-m text-gray-900 rounded-lg w-96 h-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-        style="padding-top: 0px; padding-bottom: 2px; padding-left: 6px; padding-right: 20px;" />
-      <button>
-        <img src="@/assets/images/icon/search.png" class="w-6 h-6"
-          style="padding-top: 0px; padding-bottom:0px; padding-left: 0px; padding-right: 0px;" />
-      </button>
+        class="block text-m text-gray-900 rounded-lg w-96 h-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+        style="padding-top: 0px; padding-bottom: 2px; padding-left: 10px; padding-right: 20px;" />
 
-      <div class="pb-1 text-center flex items-center" style="padding-right: 8px;">
+      <div class="pb-1 text-center flex items-center px-4" style="padding-right: 4px;">
         <button @click="toggleFavoritesFilter" class="rounded-full bg-gray-200 cursor-pointer"
           :title="showOnlyFavoritesFlag ? 'Cancel Favorites Filter' : 'Favorite Activities'">
-          <Icon name="bx:bxs-bookmarks" size="50" :color="showOnlyFavoritesFlag ? '#FFD700' : ''" />
+          <Icon name="bx:bxs-bookmarks" size="40" :color="showOnlyFavoritesFlag ? '#FFD700' : ''" />
           <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 25px;">Favorite
             Activities</span>
         </button>
       </div>
 
-      <div class="pb-1 text-center flex items-center" style="padding-right: 4px;">
+      <div class="pb-1 text-center flex items-center px-4" style="padding-right: 4px;">
         <button @click="toggleMyActivitiesFilter" class="rounded-full bg-gray-200 cursor-pointer"
           :title="showOnlyMyActivitiesFlag ? 'Cancel My Activites Filter' : 'Activities you have joined'">
-          <Icon name="bx:bxs-user-circle" size="50" :color="showOnlyMyActivitiesFlag ? '#59C8F8' : ''" />
+          <Icon name="bx:bxs-user-circle" size="40" :color="showOnlyMyActivitiesFlag ? '#59C8F8' : ''" />
           <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 25px;">My Activities</span>
         </button>
       </div>
 
-      <div class="pb-1 text-center flex items-center" style="padding-right: 4px;">
+      <div class="pb-1 text-center flex items-center px-4" style="padding-right: 4px;">
         <button @click="toggleMyCreationFilter" class="rounded-full bg-gray-200 cursor-pointer"
           :title="showOnlyMyCreationFlag ? 'Cancel My Activites Filter' : 'Activities you have created'">
-          <Icon name="bx:bxs-cog" size="50" :color="showOnlyMyCreationFlag ? '#ff0000' : ''" />
+          <Icon name="bx:bxs-cog" size="40" :color="showOnlyMyCreationFlag ? '#ff0000' : ''" />
           <span class="text-xs pl-1 pr-4 text-gray-800 font-semibold" style="padding-right: 25px;">My Creation</span>
         </button>
       </div>
@@ -184,15 +180,19 @@ const getAllActivities = async () => {
 }
 
 const toggleFavoritesFilter = () => {
+  console.log("Toggle fav activities filter called");
   if (showOnlyFavoritesFlag.value) {
+    console.log("refresh");
     getAllActivities();
   } else {
+    console.log("fil fav");
     showOnlyFavorites();
   }
   showOnlyFavoritesFlag.value = !showOnlyFavoritesFlag.value;
 };
 
 const toggleMyActivitiesFilter = () => {
+  console.log("Toggle my activities filter called");
   if (showOnlyMyActivitiesFlag.value) {
     getAllActivities();
   } else {
@@ -220,9 +220,7 @@ const showOnlyMyCreation = () => {
 
 const showOnlyMyActivities = () => {
   activities.value = activities.value.filter(activity => {
-    return activity.activity_members.filter(
-      member => member.user_id === auth.user.id
-    );
+    return activity.activity_members.some(member => member.user_id === auth.user.id);
   });
 };
 
@@ -249,12 +247,19 @@ const likePost = async (activityID) => {
 const unlikePost = async (activityID) => {
   const requestData = JSON.stringify({ activity_id: activityID });
   try {
-    const response = await axios.post('http://localhost/api/unlike', requestData, options);
+    const response = await axios.delete('http://localhost/api/unlike', {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${auth.token}`,
+      },
+      data: requestData,
+    });
     getAllActivities();
   } catch (error) {
-    console.log(error)
+    console.error('Error in deleting post:', error);
   }
-}
+};
 
 const isSaved = (activity) => {
   return activity.favorites.some(favorite => favorite.user_id === auth.user.id);
@@ -277,23 +282,20 @@ const savedPost = async (activityID) => {
 const unSavedPost = async (activityID) => {
   const requestData = JSON.stringify({ activity_id: activityID });
   try {
-    const response = await axios.post('http://localhost/api/unfavorite', requestData, options);
+    const response = await axios.delete('http://localhost/api/unfavorite', {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${auth.token}`,
+      },
+      data: requestData
+    });
     getAllActivities();
-    // if (showOnlyFavoritesFlag) {
-    //   toggleFavoritesFilter();
-    //   // set timer just to reenter that filter
-    //   setTimeout(() => {
-    //     const favoritesButton = document.querySelector('[title="Favorite Activities"]');
-    //     if (favoritesButton) {
-    //       favoritesButton.click();
-    //     }
-    //   }, 50);
-    // }
   } catch (error) {
     console.log(error)
   }
-}
-
+};
+    
 </script>
 
 <style>
